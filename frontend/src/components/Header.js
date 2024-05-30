@@ -9,6 +9,7 @@ const Header = () => {
         <Link to="/cart">Cart</Link>
       </nav> */}
     </header>
+    // header end
   );
 };
 
