@@ -1,0 +1,96 @@
+/* Login.css */
+
+/* Set body overflow to hidden */
+body {
+  overflow: hidden;
+}
+
+/* Container styles */
+.login-container {
+  background-color: #fce4ec; /* Light pink background */
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: flex-end; /* Align to the bottom */
+  min-height: 100vh; /* Ensure full viewport height */
+}
+
+.login-form {
+  background-color: white;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  width: 100%;
+  margin-bottom: 180px; /* Add margin to push it up */
+}
+
+/* Title styles */
+.login-form h2 {
+  color: #ff4081; /* Pink title */
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+/* Input styles */
+.input-group {
+  margin-bottom: 20px;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.input-group input {
+  width: calc(100% - 24px); /* Adjusted width */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Button styles */
+.btn-group {
+  display: flex;
+  justify-content: space-between;
+}
+
+.login-btn,
+.signup-btn {
+  background-color: #ff4081; /* Pink button */
+  color: white;
+  border: none;
+  padding: 12px 0; /* Adjusted padding */
+  flex: 1;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-right: 10px;
+}
+
+.signup-btn {
+  background-color: #ff80ab; /* Lighter pink for sign-up button */
+}
+
+.login-btn:hover,
+.signup-btn:hover {
+  background-color: #ff80ab; /* Lighter pink on hover */
+}
+
+/* Responsive styles */
+@media (max-width: 480px) {
+  .login-form {
+    padding: 20px;
+  }
+
+  .login-form h2 {
+    font-size: 24px;
+  }
+
+  .input-group input {
+    padding: 8px;
+  }
+
+  .login-btn,
+  .signup-btn {
+    padding: 10px 0; /* Adjusted padding */
+  }
+}

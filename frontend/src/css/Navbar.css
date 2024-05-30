@@ -1,0 +1,40 @@
+/* Navbar container */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8f9fa; /* Light background */
+  padding: 1rem;
+}
+
+/* Navbar brand (logo or brand name) */
+.navbar-brand a {
+  color: #000; /* Black text color */
+  text-decoration: none;
+  font-size: 1.5rem;
+  font-weight: bold; /* Bold font weight */
+}
+
+/* Navbar links */
+.navbar-links {
+  list-style: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-links li {
+  margin-left: 1.5rem;
+}
+
+.navbar-links a {
+  color: #000; /* Black text color */
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: bold; /* Bold font weight */
+}
+
+/* Hover effect for links */
+.navbar-links a:hover {
+  text-decoration: underline;
+}
