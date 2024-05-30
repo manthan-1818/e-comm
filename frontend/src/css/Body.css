@@ -1,0 +1,17 @@
+
+.carousel-control-prev, .carousel-control-next {
+
+  color: transparent;
+  text-shadow: none;
+  background: none;
+  border: none;
+}
+
+
+.carousel-control-prev {
+  left: -35px; 
+}
+
+.carousel-control-next {
+  right: -35px;
+}

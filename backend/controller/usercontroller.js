@@ -6,7 +6,7 @@ const TempUser = require("../models/Tempuser");
 const verifyKey = process.env.VERIFY_SECRET;
 const jwtKey = process.env.JWT_SECRET;
 const jwtRefreshKey = process.env.JWT_REFRESH_SECRET;
-// conroller
+
 const userController = {
   signup: async (req, res) => {
     const { name, email, role, password } = req.body;
