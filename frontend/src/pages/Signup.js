@@ -18,7 +18,7 @@ const Signup = () => {
         password: password,
       };
       const response = await axiosInstance.post("/submit/signup", formData);
-      // alert("please check your mail");
+
       if (response.status === 200) {
         console.log("Signup successful");
         setVerificationSent(true);

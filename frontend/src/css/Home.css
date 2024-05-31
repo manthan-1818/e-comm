@@ -1,0 +1,21 @@
+
+.home-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  .body-container {
+    flex: 1;
+    overflow-y: auto;
+  }
+  
+
+  .footer {
+    background-color: #f8f9fa;
+    color: #333;
+    padding: 20px 0;
+    text-align: center;
+    width: 100%;
+  }
+  

@@ -1,21 +1,20 @@
-/* Navbar container */
+
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #f8f9fa; /* Light background */
+  background-color: #f8f9fa; 
   padding: 1rem;
 }
 
-/* Navbar brand (logo or brand name) */
 .navbar-brand a {
-  color: #000; /* Black text color */
+  color: #000;
   text-decoration: none;
   font-size: 1.5rem;
-  font-weight: bold; /* Bold font weight */
+  font-weight: bold; 
 }
 
-/* Navbar links */
+
 .navbar-links {
   list-style: none;
   display: flex;
@@ -28,13 +27,35 @@
 }
 
 .navbar-links a {
-  color: #000; /* Black text color */
+  color: #000; 
   text-decoration: none;
   font-size: 1rem;
-  font-weight: bold; /* Bold font weight */
+  font-weight: bold; 
 }
 
-/* Hover effect for links */
+
 .navbar-links a:hover {
   text-decoration: underline;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+}
+
+.ecommerce-link {
+  margin-right: 10px; 
+}
+
+.spacer {
+  width: 20px; 
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+}
+
+.search-bar > div {
+  margin-right: 10px;
 }

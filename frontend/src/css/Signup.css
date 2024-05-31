@@ -1,11 +1,9 @@
-/* Signup.css */
 
-/* Styles for signup page body */
 .signup-page {
-  background-color: #fce4ec; /* Light pink background */
+  background-color: #fce4ec; 
 }
 
-/* Styles for signup container */
+
 .signup-container {
   max-width: 400px;
   margin: 50px auto;
@@ -13,58 +11,56 @@
   border: 1px solid #ccc;
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  background-color: #ffffff; /* White background for the signup container */
+  background-color: #ffffff;
 }
 
-/* Title styles */
 .signup-container h2 {
   text-align: center;
   margin-bottom: 20px;
-  color: #ff4081; /* Pink title */
+  color: #ff4081; 
 }
 
-/* Form styles */
 .signup-container form {
   display: flex;
   flex-direction: column;
 }
 
 .signup-container form div {
-  margin-bottom: 20px; /* Increased margin for better separation */
+  margin-bottom: 20px; 
 }
 
-/* Label styles */
+
 .signup-container label {
   display: block;
   margin-bottom: 5px;
-  color: #333; /* Darker text color for labels */
+  color: #333; 
 }
 
-/* Input styles */
+
 .signup-container input {
   width: 100%;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  box-sizing: border-box; /* Ensure padding is included in width */
+  box-sizing: border-box; 
 }
 
-/* Button styles */
+
 .signup-container button {
   padding: 10px;
   font-size: 16px;
   color: #fff;
-  background-color: #ff4081; /* Pink button */
+  background-color: #ff4081; 
   border: none;
   border-radius: 3px;
   cursor: pointer;
 }
 
 .signup-container button:hover {
-  background-color: #ff80ab; /* Lighter pink on hover */
+  background-color: #ff80ab; 
 }
 
-/* Responsive styles */
+
 @media screen and (max-width: 600px) {
   .signup-container {
     max-width: 90%;

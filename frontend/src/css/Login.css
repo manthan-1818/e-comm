@@ -1,17 +1,15 @@
-/* Login.css */
 
-/* Set body overflow to hidden */
 body {
   overflow: hidden;
 }
 
-/* Container styles */
+
 .login-container {
-  background-color: #fce4ec; /* Light pink background */
+  background-color: #fce4ec; 
   display: flex;
-  justify-content: center; /* Center horizontally */
-  align-items: flex-end; /* Align to the bottom */
-  min-height: 100vh; /* Ensure full viewport height */
+  justify-content: center; 
+  align-items: flex-end; 
+  min-height: 100vh;
 }
 
 .login-form {
@@ -21,17 +19,17 @@ body {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   max-width: 400px;
   width: 100%;
-  margin-bottom: 180px; /* Add margin to push it up */
+  margin-bottom: 180px; 
 }
 
-/* Title styles */
+
 .login-form h2 {
-  color: #ff4081; /* Pink title */
+  color: #ff4081; 
   text-align: center;
   margin-bottom: 30px;
 }
 
-/* Input styles */
+
 .input-group {
   margin-bottom: 20px;
 }
@@ -42,13 +40,13 @@ body {
 }
 
 .input-group input {
-  width: calc(100% - 24px); /* Adjusted width */
+  width: calc(100% - 24px);
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
 }
 
-/* Button styles */
+
 .btn-group {
   display: flex;
   justify-content: space-between;
@@ -56,10 +54,10 @@ body {
 
 .login-btn,
 .signup-btn {
-  background-color: #ff4081; /* Pink button */
+  background-color: #ff4081;
   color: white;
   border: none;
-  padding: 12px 0; /* Adjusted padding */
+  padding: 12px 0; 
   flex: 1;
   cursor: pointer;
   transition: background-color 0.3s;
@@ -67,15 +65,14 @@ body {
 }
 
 .signup-btn {
-  background-color: #ff80ab; /* Lighter pink for sign-up button */
+  background-color: #ff80ab;
 }
 
 .login-btn:hover,
 .signup-btn:hover {
-  background-color: #ff80ab; /* Lighter pink on hover */
+  background-color: #ff80ab;
 }
 
-/* Responsive styles */
 @media (max-width: 480px) {
   .login-form {
     padding: 20px;
@@ -91,6 +88,6 @@ body {
 
   .login-btn,
   .signup-btn {
-    padding: 10px 0; /* Adjusted padding */
+    padding: 10px 0; 
   }
 }

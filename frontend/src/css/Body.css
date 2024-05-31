@@ -1,15 +1,20 @@
-
-.carousel-control-prev, .carousel-control-next {
-
-  color: transparent;
-  text-shadow: none;
-  background: none;
-  border: none;
+.carousel-control-prev,
+.carousel-control-next {
+  color: transparent !important;
+  text-shadow: none !important;
+  background: none !important;
+  border: none !important;
+  font-size: 0; 
+  line-height: 0; 
 }
 
+.carousel-control-prev::before,
+.carousel-control-next::before {
+  content: none !important; 
+}
 
 .carousel-control-prev {
-  left: -35px; 
+  left: -35px;
 }
 
 .carousel-control-next {

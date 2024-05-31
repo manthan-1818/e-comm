@@ -6,12 +6,13 @@ import ProductCategories from "./ProductCategories";
 import image1 from "../images/i1.jpg";
 import image2 from "../images/i2.jpg";
 import image3 from "../images/i3.jpg";
+import css from "../css/Body.css";
 
 const Body = () => {
   return (
-    <div>
+    <div className="body-container" style={{ marginBottom: '3%' }}> 
       <Category />
-      <Carousel data-bs-theme="dark">
+      <Carousel data-bs-theme="dark" >
         <Carousel.Item>
           <img className="d-block w-100" src={image1} alt="First slide" />
           <Carousel.Caption></Carousel.Caption>
@@ -26,10 +27,17 @@ const Body = () => {
         </Carousel.Item>
       </Carousel>
       <Container className="my-3">
+        <Typography variant="h5">Best Of Electronics</Typography>
+      </Container>
+      <ProductCategories />
+      <Container className="my-3">
         <Typography variant="h5">Best Of Mobiles</Typography>
       </Container>
       <ProductCategories />
-      
+      <Container className="my-3">
+        <Typography variant="h5">Beauty, Food, Toys & more</Typography>
+      </Container>
+      <ProductCategories />
     </div>
   );
 };

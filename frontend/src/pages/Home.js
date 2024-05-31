@@ -1,5 +1,4 @@
-import React, { useEffect } from "react";
-import axios from "axios";
+import React from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import "../css/Home.css";
@@ -8,10 +7,10 @@ import Body from "../components/Body";
 const Home = () => {
   return (
     <div className="home-container">
-    <Navbar />
-    <Body />
-    <Footer />
-  </div>
+      <Navbar />
+      <Body />
+      <Footer />
+    </div>
   );
 };
 

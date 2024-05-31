@@ -1,59 +1,17 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { styled, alpha } from '@mui/material/styles';
-import InputBase from '@mui/material/InputBase';
-import SearchIcon from '@mui/icons-material/Search';
+import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Person2Icon from '@mui/icons-material/Person2';
 import LocalMallIcon from '@mui/icons-material/LocalMall';
+import SearchIcon from '@mui/icons-material/Search';
+import InputBase from '@mui/material/InputBase';
 import '../css/Navbar.css';
 import { Typography } from '@mui/material';
 import { logout } from '../redux/slice/authSlice'; 
-
-// Styled components for search bar
-const Search = styled('div')(({ theme }) => ({
-  position: 'relative',
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.black, 0.15),
-  '&:hover': {
-    backgroundColor: alpha(theme.palette.common.black, 0.25),
-  },
-  marginLeft: 0,
-  width: '100%',
-  [theme.breakpoints.up('sm')]: {
-    marginLeft: theme.spacing(1),
-    width: 'auto',
-  },
-}));
-
-const SearchIconWrapper = styled('div')(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: '100%',
-  position: 'absolute',
-  pointerEvents: 'none',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: 'inherit',
-  width: '100%',
-  '& .MuiInputBase-input': {
-    padding: theme.spacing(1, 1, 1, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create('width'),
-    [theme.breakpoints.up('sm')]: {
-      width: '12ch',
-      '&:focus': {
-        width: '20ch',
-      },
-    },
-  },
-}));
 
 const IconTextWrapper = styled('div')({
   display: 'flex',
@@ -66,7 +24,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const location = useLocation();
-
+  const [searchTerm, setSearchTerm] = useState('');
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
@@ -77,7 +35,14 @@ const Navbar = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const handleSearch = () => {
+    navigate(`/search?term=${encodeURIComponent(searchTerm)}`);
+  };
 
+
+  const handleInputChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
   const handleLoginClick = () => {
     navigate('/login');
   };
@@ -88,27 +53,36 @@ const Navbar = () => {
     handleClose();
   };
 
-  // Check if the current location is the login page
+ 
   const isLoginPage = location.pathname === '/login';
 
   return (
     <nav className="navbar">
-      <div className="navbar-brand">
-        <Link to="/">E-Commerce</Link>
+    <div className="navbar-brand">
+      <Link to="/" className="ecommerce-link">E-Commerce</Link>
+      <div className="spacer"></div>
+      <div className="search-bar">
+        <div>
+          <SearchIcon />
+        </div>
+        <InputBase
+          placeholder="Search products, brands, and more..."
+          inputProps={{ 'aria-label': 'search' }}
+          value={searchTerm}
+          onChange={handleInputChange}
+          onKeyPress={(event) => {
+            if (event.key === 'Enter') {
+              handleSearch();
+            }
+          }}
+          style={{ width: '300px' }}
+        />
       </div>
+    </div>
 
       <div style={{ marginLeft: 'auto' }}>
         <ul className="navbar-links">
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search…"
-              inputProps={{ 'aria-label': 'search' }}
-            />
-          </Search>
-          {!isLoginPage && ( // Render the Login button only if not on the login page
+          {!isLoginPage && ( 
             <li>
               {isAuthenticated ? (
                 <>

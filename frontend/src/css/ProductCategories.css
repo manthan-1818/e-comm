@@ -1,0 +1,40 @@
+.product-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+    /* Ensure fixed dimensions */
+    width: 200px; /* Reduced width */
+    height: 250px; /* Reduced height */
+    text-align: center;
+    margin: 0; /* Remove default margin */
+  }
+  
+  .product-image-container {
+    width: 100%;
+    height: 70%; /* Adjusted height for image container */
+    overflow: hidden;
+    margin: 0; /* Remove default margin */
+  }
+  
+  .product-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .product-info {
+    padding: 12px;
+    height: 30%; /* Adjusted height for product info container */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 0; /* Remove default margin */
+  }
+  
+  .product-info h6 {
+    margin: 0;
+    font-size: 0.9rem; /* Reduced font size for text */
+    color: #333;
+    line-height: 1; /* Adjusted line height to reduce spacing between lines */
+  }
+  

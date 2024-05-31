@@ -131,7 +131,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Container, Box, Typography, CircularProgress } from "@mui/material";
+import { Box, Typography, CircularProgress } from "@mui/material";
 import { Image } from "react-bootstrap";
 import image1 from "../images/ai.jpeg";
 import image2 from "../images/bag.jpg";
@@ -144,8 +144,8 @@ import image8 from "../images/electronics.webp";
 import image9 from "../images/mobile.webp";
 import image10 from "../images/grocery.webp";
 import image11 from "../images/air2.jpeg";
-import image12 from "../images/apple.jpg"; 
-import css from "../css/Body.css";
+import image12 from "../images/apple.jpg";
+import "../css/Category.css";
 
 const mockCategoryProduct = [
   {
@@ -164,7 +164,7 @@ const mockCategoryProduct = [
     productName: "Clothing",
   },
   {
-    category: "Applieances",
+    category: "Appliances",
     productImage: image8,
     productName: "Clothing",
   },
@@ -173,7 +173,6 @@ const mockCategoryProduct = [
     productImage: image12,
     productName: "Clothing",
   },
-
   {
     category: "Fashion",
     productImage: image7,
@@ -194,49 +193,7 @@ const mockCategoryProduct = [
     productImage: image6,
     productName: "Clothing",
   },
-  
-  // {
-  //   category: "Books",
-  //   productImage: { image2 },
-  //   productName: "Books",
-  // },
-  // {
-  //   category: "Mobiles",
-  //   productImage: { image2 },
-  //   productName: "Mobiles",
-  // },
-  // {
-  //   category: "Toys",
-  //   productImage: { image2 },
-  //   productName: "Toys",
-  // },
-  // {
-  //   category: "Skincare",
-  //   productImage: { image2 },
-  //   productName: "Skincare",
-  // },
-  // {
-  //   category: "Headphones",
-  //   productImage: { image2 },
-  //   productName: "Headphones",
-  // },
-  // {
-  //   category: "Watch",
-  //   productImage: { image2 },
-  //   productName: "Watch",
-  // },
-  // {
-  //   category: "Shoes",
-  //   productImage: { image2 },
-  //   productName: "Shoes",
-  // },
-  // {
-  //   category: "Gold",
-  //   productImage: { image2 },
-  //   productName: "Gold",
-  // },
 ];
-
 
 const Category = () => {
   const [categoryProduct, setCategoryProduct] = useState([]);
@@ -270,31 +227,21 @@ const Category = () => {
           <CircularProgress />
         </Box>
       ) : (
-        <div
-          style={{
-            overflowX: "auto",
-            whiteSpace: "nowrap",
-            paddingBottom: "1rem",
-          }}
-        >
+        <div className="category-container">
           {categoryProduct.map((category, index) => (
             <Box
               key={index}
               onClick={() => handleChange(category.category)}
-              sx={{
-                display: "inline-block",
-                cursor: "pointer",
-                textAlign: "center",
-                marginRight: "0.5rem", // Adjust spacing between category items
-              }}
+              className="category-box"
             >
               <Image
                 src={category.productImage}
                 alt={category.productName}
-                className="round-image"
-                style={{ width: "100px", height: "100px" }}
+                className="category-image"
               />
-              <Typography variant="h6">{category.category}</Typography>
+              <Typography variant="h6" className="category-text">
+                {category.category}
+              </Typography>
             </Box>
           ))}
         </div>
