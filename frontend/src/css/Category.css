@@ -1,11 +1,11 @@
 .category-container {
-    display: flex;
-    justify-content: flex-start; 
-    overflow-x: auto;
-    white-space: nowrap;
-    padding-bottom: 1rem;
-  }
-  
+  display: flex;
+  justify-content: space-between; 
+  overflow-x: hidden !important;
+  white-space: nowrap;
+  padding-bottom: 1rem;
+}
+
   .category-box {
     display: inline-block;
     cursor: pointer;

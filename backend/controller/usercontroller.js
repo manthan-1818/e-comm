@@ -88,13 +88,13 @@ const userController = {
     try {
       const { token } = req.params;
       const decoded = jwt.verify(token, verifyKey);
-
+  
       const tempUser = await TempUser.findOne({ verificationToken: token });
-
+  
       if (!tempUser || tempUser.email !== decoded.email) {
         return res.status(400).json({ message: "Invalid or expired token." });
       }
-
+  
       const user = new User({
         email: tempUser.email,
         password: tempUser.password,
@@ -102,12 +102,13 @@ const userController = {
         role: tempUser.role,
       });
       await user.save();
-
+  
       await TempUser.deleteOne({ _id: tempUser._id });
-
-      res.redirect(`${process.env.CLIENT_URL}/verification-success`);
+  
+      // Send JSON response with the URL
+      res.redirectUrl("http://localhost:3000/verification-mail");
     } catch (error) {
-      console.error("Verification error:", error); // Log error message if an error occurs
+      console.error("Verification error:", error);
       res.status(400).json({ error: error.message });
     }
   },

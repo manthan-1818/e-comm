@@ -12,6 +12,7 @@ import InputBase from '@mui/material/InputBase';
 import '../css/Navbar.css';
 import { Typography } from '@mui/material';
 import { logout } from '../redux/slice/authSlice'; 
+import image from "../images/logo.png"
 
 const IconTextWrapper = styled('div')({
   display: 'flex',
@@ -59,7 +60,15 @@ const Navbar = () => {
   return (
     <nav className="navbar">
     <div className="navbar-brand">
-      <Link to="/" className="ecommerce-link">E-Commerce</Link>
+    <Link to="/" className="ecommerce-link">
+  <img
+    src={image}
+    alt="E-Commerce"
+    style={{ marginRight: '5px', width: '100px', height: '52px' }} 
+  />
+  
+</Link>
+
       <div className="spacer"></div>
       <div className="search-bar">
         <div>

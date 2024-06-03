@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-
+import Verificationmail from "./components/Verificationmail"
 import Home from "./pages/Home";
 import Cart from "./pages/Cart";
 import Login from "./pages/Login";
@@ -12,7 +12,10 @@ const App = () => {
       <div className="App">
           <Routes>
             <Route path="/" element={<Home />} />
-
+            <Route
+            path="/verification-mail"
+            element={<Verificationmail />}
+          ></Route>
             <Route path="/cart" element={<Cart />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />

@@ -85,9 +85,8 @@ const Signup = () => {
       </form>
       {verificationSent && <p>Verification sent! Please check your email.</p>}
 
-      <p>
-        {" "}
-        Already have an account? <a href="/login"> Login</a>
+      <p class="mt-2">
+        Already have an account? <a href="/login">Login</a>
       </p>
     </div>
   );

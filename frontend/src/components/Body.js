@@ -26,15 +26,15 @@ const Body = () => {
           <Carousel.Caption></Carousel.Caption>
         </Carousel.Item>
       </Carousel>
-      <Container className="my-3">
+      <Container className="my-4">
         <Typography variant="h5">Best Of Electronics</Typography>
       </Container>
       <ProductCategories />
-      <Container className="my-3">
+      <Container className="my-4">
         <Typography variant="h5">Best Of Mobiles</Typography>
       </Container>
       <ProductCategories />
-      <Container className="my-3">
+      <Container className="my-4">
         <Typography variant="h5">Beauty, Food, Toys & more</Typography>
       </Container>
       <ProductCategories />

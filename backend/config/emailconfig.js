@@ -2,8 +2,7 @@ const nodemailer = require("nodemailer");
 const fs = require("fs");
 // const { generateEmailHTML } = require("../helper/");
 const emailTemplate = fs.readFileSync(
-  "/home/manthan/task/e-Commerce/backend/helper/images/.html",
-  // "C:/Users/bhaga/Desktop/aspire/ecomsite/backend/helper/emailTemplate.html",
+  "/home/manthan/task/e-comm/backend/helper/images/.html",
   "utf-8"
 );
 const transporter = nodemailer.createTransport({
