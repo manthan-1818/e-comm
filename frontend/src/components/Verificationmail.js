@@ -3,7 +3,8 @@ import { Button, Card, CardContent, CardMedia, Container, Typography } from "@mu
 import { useNavigate } from "react-router-dom";
 import imageSuccess from "../images/accepted.jpg";
 
-const VerificationSuccess = () => {
+
+const Verificationmail = () => {
   const navigate = useNavigate();
 
   const handleLoginRedirect = () => {
@@ -40,4 +41,4 @@ const VerificationSuccess = () => {
   );
 };
 
-export default VerificationSuccess;
+export default Verificationmail;

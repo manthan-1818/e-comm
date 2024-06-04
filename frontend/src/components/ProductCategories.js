@@ -81,7 +81,7 @@ const ProductCategories = ({ category }) => {
 
   const settings = {
     dots: false,
-    infinite: false, // Disable infinite scrolling
+    infinite: false, 
     speed: 500,
     slidesToShow: 6,
     slidesToScroll: 1,
@@ -117,7 +117,7 @@ const ProductCategories = ({ category }) => {
             {products.map((product) => (
               <Link
                 to={`/product/${product._id}`}
-                style={{ textDecoration: "none" }}
+                style={{ textDecoration: "none", '&:hover': { textDecoration: 'none' } }}
                 key={product._id}
               >
                 <Box className="product-card" marginRight={2} marginBottom={2}>

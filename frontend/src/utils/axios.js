@@ -39,7 +39,7 @@ axiosInstance.interceptors.response.use(
     console.error("Response Interceptor Error:", error);
 
     if (error.response && error.response.status === 419) {
-      // Handle 419 error by refreshing the token
+    
       try {
         const refreshToken = localStorage.getItem("refreshToken");
         if (!refreshToken) {
@@ -54,7 +54,7 @@ axiosInstance.interceptors.response.use(
         const newAccessToken = refreshResponse.data.accessToken;
         console.log("new token", newAccessToken);
         localStorage.setItem("accessToken", newAccessToken);
-        // Retry the original request with the new access token
+       
         const originalRequest = error.config;
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return axiosInstance(originalRequest);
@@ -65,7 +65,7 @@ axiosInstance.interceptors.response.use(
           refreshError.response.status === 401 &&
           refreshError.response.data.message === "Refresh token has expired"
         ) {
-        //   store.dispatch(logout());
+      
         }
         return Promise.reject(error);
       }

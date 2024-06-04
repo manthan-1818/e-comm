@@ -1,6 +1,6 @@
 import axiosInstance from "./axios";
 
-// current user
+
 export const get_session_user = () => {
   const userJSON = localStorage.getItem("user");
   if (!userJSON) {
@@ -48,25 +48,14 @@ export const remove_token = () => {
   return localStorage.removeItem("token");
 };
 
-// fetch user data
+
 export const fetchUserData = async () => {
   try {
     const response = await axiosInstance.get("/submit/fetch-userdata");
     return response.data;
   } catch (error) {
     console.error("Error fetching user data:", error);
-    return null; // or handle the error in a different way
+    return null; 
   }
 };
 
-
-// //product
-// export const fetchProductData = async (page) => {
-//   const response = await axiosInstance.get("/product/fetch-Productdata??page=${page}&limit=8");
-//   return response.data;
-// };
-
-// export const fetchProductsByCategory=async (category)=>{
-//   const response =await axiosInstance.get(`/product/fetch-productdata-by-category?category=${category}`)
-//   return response.data;
-// }

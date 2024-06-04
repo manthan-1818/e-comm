@@ -38,7 +38,7 @@ const userController = {
 
       if (userData.success) {
         const expiresIn = "15m";
-        // const role = userData.user.role;
+
         const email = userData.user.email;
         const accessToken = jwt.sign({ email }, jwtKey, {
           expiresIn,
@@ -55,7 +55,6 @@ const userController = {
           message: userData.message,
           accessToken,
           refreshToken,
-          // user: { ...userData.user, role },
         });
       } else {
         let statusCode = 401;
@@ -88,13 +87,13 @@ const userController = {
     try {
       const { token } = req.params;
       const decoded = jwt.verify(token, verifyKey);
-  
+
       const tempUser = await TempUser.findOne({ verificationToken: token });
-  
+
       if (!tempUser || tempUser.email !== decoded.email) {
         return res.status(400).json({ message: "Invalid or expired token." });
       }
-  
+
       const user = new User({
         email: tempUser.email,
         password: tempUser.password,
@@ -102,11 +101,10 @@ const userController = {
         role: tempUser.role,
       });
       await user.save();
-  
+
       await TempUser.deleteOne({ _id: tempUser._id });
-  
-      // Send JSON response with the URL
-      res.redirectUrl("http://localhost:3000/verification-mail");
+
+      res.redirect(`${process.env.CLIENT_URL}/verification-mail`);
     } catch (error) {
       console.error("Verification error:", error);
       res.status(400).json({ error: error.message });

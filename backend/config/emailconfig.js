@@ -1,8 +1,7 @@
 const nodemailer = require("nodemailer");
 const fs = require("fs");
-// const { generateEmailHTML } = require("../helper/");
 const emailTemplate = fs.readFileSync(
-  "/home/manthan/task/e-comm/backend/helper/images/.html",
+  "/home/manthan/task/e-comm/backend/helper/images/template.html",
   "utf-8"
 );
 const transporter = nodemailer.createTransport({
@@ -14,10 +13,10 @@ const transporter = nodemailer.createTransport({
 });
 const sendVerificationEmail = async (user, token) => {
   const url = `http://localhost:${process.env.PORT}/submit/verify/${token}`;
+
   const emailBody = emailTemplate.replace("{{verificationUrl}}", url);
-  
+
   try {
-    // Send email
     await transporter.sendMail({
       to: user.email,
       subject: "Verify your email",
