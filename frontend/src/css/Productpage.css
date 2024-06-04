@@ -1,0 +1,177 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  flex-wrap: wrap;
+}
+
+.product-gallery {
+  display: flex;
+  flex-direction: column;
+  margin-right: 20px;
+}
+
+.main-image {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.image-container {
+  width: 100%;
+  height: 500px; /* Fixed height for image container */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.image-container img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.thumbnails {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.thumbnails img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  margin: 10px 0;
+  cursor: pointer;
+}
+
+.product-details {
+  flex: 3;
+  padding: 20px;
+  margin-left: 20px;
+}
+
+.product-details h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.rating span {
+  margin-right: 10px;
+}
+
+.price {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.current-price {
+  font-size: 24px;
+  color: #b12704;
+  margin-right: 10px;
+}
+
+.original-price {
+  font-size: 20px;
+  color: #565959;
+  text-decoration: line-through;
+}
+
+.offers h3,
+.highlights h3 {
+  margin-bottom: 10px;
+}
+
+.offers ul,
+.highlights ul {
+  list-style-type: disc;
+  margin-left: 20px;
+  padding-left: 0px;
+}
+
+.availability {
+  margin-top: 20px;
+  margin-bottom: 3px;
+}
+
+.availability input {
+  padding: 8px;
+  margin-right: 10px;
+}
+
+.availability button {
+  padding: 8px 20px;
+  cursor: pointer;
+}
+
+.availability span {
+  display: block;
+  margin-top: 10px;
+  color: #b12704;
+}
+
+.offers ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.add-to-cart,
+.buy-now {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.add-to-cart {
+  background-color: #ff9800;
+  color: white;
+}
+
+.buy-now {
+  background-color: #f44336;
+  color: white;
+}
+
+.check-button {
+  color: #0b67f1;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-size: inherit;
+}
+
+.pincode-container {
+  display: flex;
+  align-items: baseline;
+  border-bottom: 1px solid #0b67f1;
+  width: fit-content;
+}
+
+.availability input {
+  padding: 8px;
+  margin-right: 1px;
+  border: none;
+  outline: none;
+}

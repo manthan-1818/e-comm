@@ -14,15 +14,15 @@ const Body = () => {
       <Category />
       <Carousel data-bs-theme="dark" >
         <Carousel.Item>
-          <img className="d-block w-100" src={image1} alt="First slide" />
+          <img className="d-block w-100" src={image1} alt="First slide" style={{ objectFit: 'cover' }} />
           <Carousel.Caption></Carousel.Caption>
         </Carousel.Item>
         <Carousel.Item>
-          <img className="d-block w-100" src={image2} alt="Second slide" />
+          <img className="d-block w-100" src={image2} alt="Second slide" style={{ objectFit: 'cover' }} />
           <Carousel.Caption></Carousel.Caption>
         </Carousel.Item>
         <Carousel.Item>
-          <img className="d-block w-100" src={image3} alt="Third slide" />
+          <img className="d-block w-100" src={image3} alt="Third slide" style={{ objectFit: 'cover' }} />
           <Carousel.Caption></Carousel.Caption>
         </Carousel.Item>
       </Carousel>
