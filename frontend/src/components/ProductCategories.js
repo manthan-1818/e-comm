@@ -81,7 +81,7 @@ const ProductCategories = ({ category }) => {
 
   const settings = {
     dots: false,
-    infinite: false, 
+    infinite: false,
     speed: 500,
     slidesToShow: 6,
     slidesToScroll: 1,
@@ -117,7 +117,10 @@ const ProductCategories = ({ category }) => {
             {products.map((product) => (
               <Link
                 to={`/product/${product._id}`}
-                style={{ textDecoration: "none", '&:hover': { textDecoration: 'none' } }}
+                style={{
+                  textDecoration: "none",
+                  "&:hover": { textDecoration: "none" },
+                }}
                 key={product._id}
               >
                 <Box className="product-card" marginRight={2} marginBottom={2}>
@@ -125,19 +128,28 @@ const ProductCategories = ({ category }) => {
                     <img src={product.productImage} alt={product.productName} />
                   </Box>
                   <Box className="product-info">
-                    <Typography
-                      variant="body1"
-                      style={{ marginBottom: "0.5rem" }}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        marginBottom: "0.5rem",
+                      }}
                     >
-                      {product.productName}
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      color="textSecondary"
-                      className="price"
-                    >
-                      {product.price}
-                    </Typography>
+                      <Typography
+                        variant="body1"
+                        style={{ marginBottom: "0.5rem" }}
+                      >
+                        {product.productName}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        color="textSecondary"
+                        className="price"
+                      >
+                        {product.price}
+                      </Typography>
+                    </Box>
                   </Box>
                 </Box>
               </Link>

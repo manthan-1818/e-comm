@@ -77,7 +77,7 @@ const Category = () => {
   };
 
   const handleChange = (category) => {
-    navigate(`/product/search/${category}`);
+    navigate(`/productlist`);
   };
 
   useEffect(() => {
