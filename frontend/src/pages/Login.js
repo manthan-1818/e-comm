@@ -32,6 +32,7 @@ const Login = () => {
         set_token(accessToken);
         localStorage.setItem("refreshToken", refreshToken);
         dispatch(loginSuccess({ user, accessToken }));
+         console.log("User role:", user.role);
         navigate("/");
       } else {
         console.error("Login failed:", message);

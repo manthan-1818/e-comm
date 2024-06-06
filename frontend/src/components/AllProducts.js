@@ -211,7 +211,6 @@ const AllProducts = () => {
     variant="contained"
     sx={{
       backgroundColor: "#d63384",
-    //   color: "#fff", 
       "&:hover": {
         backgroundColor: "#d63384",
       },

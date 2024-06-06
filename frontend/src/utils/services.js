@@ -1,6 +1,5 @@
 import axiosInstance from "./axios";
 
-
 export const get_session_user = () => {
   const userJSON = localStorage.getItem("user");
   if (!userJSON) {
@@ -24,7 +23,7 @@ export const remove_session_user = () => {
 
 // is login
 export const get_is_authenticated = () => {
-  return localStorage.getItem("isAuthenticated") === 'true';
+  return localStorage.getItem("isAuthenticated") === "true";
 };
 
 export const set_is_authenticated = (setValue) => {
@@ -48,14 +47,54 @@ export const remove_token = () => {
   return localStorage.removeItem("token");
 };
 
-
+//user data
 export const fetchUserData = async () => {
-  try {
-    const response = await axiosInstance.get("/submit/fetch-userdata");
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching user data:", error);
-    return null; 
-  }
+  const response = await axiosInstance.get("/submit/fetch-userdata");
+  return response.data;
+};
+export const updateUserData = async (id, data) => {
+  const response = await axiosInstance.patch(
+    `/submit/update-userdata?id=${id}`,
+    data
+  );
+  return response.data;
+};
+export const deleteUserData = async (id) => {
+  const response = await axiosInstance.delete(
+    `/submit/delete-userdata?_id=${id}`
+  );
+  return response.data;
 };
 
+
+
+//product
+export const fetchProductData = async (page) => {
+  const response = await axiosInstance.get(
+    `/product/fetch-productdata?page=${page}&limit=8`
+  );
+  return response.data;
+};
+export const fetchProduct = async (id) => {
+  const response = await axiosInstance.get(`/product/fetch-product/${id}`);
+  return response.data;
+};
+
+export const fetchProductsByCategory = async (category) => {
+  const response = await axiosInstance.get(
+    `/product/fetch-productdata-by-category?category=${category}`
+  );
+  return response.data;
+};
+
+export const fetchCategoryProducts = async (category) => {
+  const response = await axiosInstance.get(`/product/fetch-category-product`);
+  return response.data;
+};
+
+export const deleteProduct = async (productId) => {
+  const response = await axiosInstance.delete(
+    `/product/delete-product?id=${productId}`
+  );
+  return response.data;
+};

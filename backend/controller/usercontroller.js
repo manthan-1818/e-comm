@@ -3,6 +3,7 @@ const sendVerificationEmail = require("../config/emailconfig");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const TempUser = require("../models/Tempuser");
+const user = require("../models/user");
 const verifyKey = process.env.VERIFY_SECRET;
 const jwtKey = process.env.JWT_SECRET;
 const jwtRefreshKey = process.env.JWT_REFRESH_SECRET;
@@ -55,6 +56,7 @@ const userController = {
           message: userData.message,
           accessToken,
           refreshToken,
+          user: userData.user,
         });
       } else {
         let statusCode = 401;
@@ -81,6 +83,33 @@ const userController = {
       }
     } catch (e) {
       res.status(500).json({ message: "internal server error" });
+    }
+  },
+  updateData: async (req, res) => {
+    const { id } = req.query;
+    try {
+      const { name, email, role } = req.body;
+      const response = await userService.updateData({
+        id,
+        name,
+        email,
+        role,
+      });
+      res.status(200).json(response);
+    } catch (e) {
+      console.log("error", e);
+      res.status(500).json({ error: "internal server error" });
+    }
+  },
+  deleteData: async (req, res) => {
+    try {
+      const { _id } = req.query;
+
+      const blogData = await userService.deleteData(_id);
+      res.status(200).json(blogData);
+    } catch (error) {
+      console.error(`deleteUserdata controller error : ${error}`);
+      res.status(500).json({ error: "Internal server error" });
     }
   },
   verify: async (req, res) => {

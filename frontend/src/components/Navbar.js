@@ -12,7 +12,7 @@ import InputBase from '@mui/material/InputBase';
 import '../css/Navbar.css';
 import { Typography } from '@mui/material';
 import { logout } from '../redux/slice/authSlice'; 
-import image from "../images/logo.png"
+import image from "../images/logo.png";
 
 const IconTextWrapper = styled('div')({
   display: 'flex',
@@ -23,6 +23,7 @@ const IconTextWrapper = styled('div')({
 const Navbar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const user = useSelector((state) => state?.auth.user);
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const location = useLocation();
   const [searchTerm, setSearchTerm] = useState('');
@@ -36,16 +37,27 @@ const Navbar = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   const handleSearch = () => {
     navigate(`/search?term=${encodeURIComponent(searchTerm)}`);
   };
 
-
   const handleInputChange = (event) => {
     setSearchTerm(event.target.value);
   };
+
   const handleLoginClick = () => {
     navigate('/login');
+  };
+
+  const handlePanel = () => {
+    navigate("/admin-panel");
+    handleClose();
+  };
+
+  const handleProfile = () => {
+    navigate("/profile");
+    handleClose();
   };
 
   const handleLogout = () => {
@@ -54,44 +66,42 @@ const Navbar = () => {
     handleClose();
   };
 
- 
   const isLoginPage = location.pathname === '/login';
+  const isAdminPanelPage = location.pathname === '/admin-panel';
 
   return (
     <nav className="navbar">
-    <div className="navbar-brand">
-    <Link to="/" className="ecommerce-link">
-  <img
-    src={image}
-    alt="E-Commerce"
-    style={{ marginRight: '5px', width: '100px', height: '52px' }} 
-  />
-  
-</Link>
-
-      <div className="spacer"></div>
-      <div className="search-bar">
-        <div>
-          <SearchIcon />
+      <div className="navbar-brand">
+        <Link to="/" className="ecommerce-link">
+          <img
+            src={image}
+            alt="E-Commerce"
+            style={{ marginRight: '5px', width: '100px', height: '52px' }} 
+          />
+        </Link>
+        <div className="spacer"></div>
+        <div className="search-bar">
+          <div>
+            <SearchIcon />
+          </div>
+          <InputBase
+            placeholder="Search products, brands, and more..."
+            inputProps={{ 'aria-label': 'search' }}
+            value={searchTerm}
+            onChange={handleInputChange}
+            onKeyPress={(event) => {
+              if (event.key === 'Enter') {
+                handleSearch();
+              }
+            }}
+            style={{ width: '300px' }}
+          />
         </div>
-        <InputBase
-          placeholder="Search products, brands, and more..."
-          inputProps={{ 'aria-label': 'search' }}
-          value={searchTerm}
-          onChange={handleInputChange}
-          onKeyPress={(event) => {
-            if (event.key === 'Enter') {
-              handleSearch();
-            }
-          }}
-          style={{ width: '300px' }}
-        />
       </div>
-    </div>
 
       <div style={{ marginLeft: 'auto' }}>
         <ul className="navbar-links">
-          {!isLoginPage && ( 
+          {!isLoginPage && (
             <li>
               {isAuthenticated ? (
                 <>
@@ -122,8 +132,10 @@ const Navbar = () => {
                     open={open}
                     onClose={handleClose}
                   >
-                    <MenuItem onClick={handleClose}>Profile</MenuItem>
-                    <MenuItem onClick={handleClose}>My account</MenuItem>
+                    <MenuItem onClick={handleProfile}>Profile</MenuItem>
+                    {!isAdminPanelPage && user?.role === "Admin" && (
+                      <MenuItem onClick={handlePanel}>Admin Panel</MenuItem>
+                    )}
                     <MenuItem onClick={handleLogout}>Logout</MenuItem>
                   </Menu>
                 </>
@@ -174,5 +186,5 @@ const Navbar = () => {
     </nav>
   );
 };
-  
+
 export default Navbar;

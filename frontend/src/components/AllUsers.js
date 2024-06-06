@@ -11,10 +11,16 @@ import {
   Typography,
   Modal,
 } from "@mui/material";
+import {
+  fetchUserData,
+  updateUserData,
+  deleteUserData,
+} from "../utils/services";
 import Select from "react-select";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useForm, Controller } from "react-hook-form";
+import { useSelector } from "react-redux";
 
 const style = {
   position: "absolute",
@@ -34,6 +40,7 @@ const AllUsers = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [userToDelete, setUserToDelete] = useState(null);
+  const currentUser = useSelector((state) => state.auth.user);
   const {
     register,
     control,
@@ -51,23 +58,11 @@ const AllUsers = () => {
   const handleClose = () => setOpen(false);
 
   const fetchData = async () => {
-    // Simulate fetching data from backend
     try {
-      // Simulated response data
-      const response = {
-        data: [
-          {
-            id: 1,
-            name: "John Doe",
-            email: "john.doe@example.com",
-            role: "Admin",
-          },
-          // Add more user data if needed
-        ],
-      };
-      const rowDataWithId = response.data.map((user) => ({
+      const response = await fetchUserData();
+      const rowDataWithId = response.data.map((user, index) => ({
         ...user,
-        id: user.id,
+        id: index + 1,
       }));
       setRowData(rowDataWithId);
     } catch (error) {
@@ -83,20 +78,16 @@ const AllUsers = () => {
     handleOpen(rowData);
   };
 
-  const handleDeleteClick = (rowData) => {
-    setUserToDelete(rowData);
-    setShowDeleteModal(true);
-  };
-
-  const handleConfirmDelete = () => {
-    const newData = rowData.filter((user) => user.id !== userToDelete.id);
-    setRowData(newData);
-    setShowDeleteModal(false);
-  };
-
-  const handleCancelDelete = () => {
-    setShowDeleteModal(false);
-    setUserToDelete(null);
+  const handleDeleteClick = async (rowData) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete?");
+    if (confirmDelete) {
+      try {
+        await deleteUserData(rowData._id);
+        fetchData(); // Refresh the data after deletion
+      } catch (error) {
+        console.error("Error deleting user:", error);
+      }
+    }
   };
 
   const ActionRenderer = ({ data }) => (
@@ -104,19 +95,23 @@ const AllUsers = () => {
       <IconButton onClick={() => handleEditClick(data)}>
         <EditIcon />
       </IconButton>
-      <IconButton onClick={() => handleDeleteClick(data)}>
+      <IconButton
+        onClick={() => handleDeleteClick(data)}
+        disabled={currentUser._id === data._id} // Disable delete button for the current user
+      >
         <DeleteIcon />
       </IconButton>
     </div>
   );
 
   const onSubmit = async (data) => {
-    // Simulated update operation
-    const newData = rowData.map((user) =>
-      user.id === selectedUser.id ? { ...user, ...data } : user
-    );
-    setRowData(newData);
-    handleClose();
+    try {
+      await updateUserData(selectedUser._id, data); // Use the correct user ID for updating
+      handleClose();
+      fetchData(); // Refresh the data after update
+    } catch (error) {
+      console.error("Error updating user data:", error);
+    }
   };
 
   useEffect(() => {
@@ -153,7 +148,7 @@ const AllUsers = () => {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2" sx={{ mb: 2 }}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
             Edit User
           </Typography>
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -192,71 +187,20 @@ const AllUsers = () => {
                     { value: "Admin", label: "Admin" },
                   ]}
                   defaultValue={field.value}
-                  placeholder="Select Role"
-                  styles={{
-                    container: (base) => ({ ...base, marginTop: '16px', marginBottom: '16px' }),
-                    control: (base) => ({ ...base, height: '56px' }),
-                  }}
                 />
               )}
             />
             <Button
               type="submit"
               variant="contained"
+              color="primary"
               fullWidth
               size="large"
-              sx={{
-                mt: 2,
-                backgroundColor: '#d63384', 
-                '&:hover': {
-                  backgroundColor: '#d63384', 
-                },
-                color: '#fff', 
-                borderRadius: 2
-              }}
+              sx={{ mt: 2 }}
             >
               Save
             </Button>
           </form>
-        </Box>
-      </Modal>
-      <Modal
-        open={showDeleteModal}
-        onClose={handleCancelDelete}
-        aria-labelledby="modal-delete-title"
-        aria-describedby="modal-delete-description"
-        centered
-      >
-        <Box sx={style}>
-          <Typography id="modal-delete-title" variant="h6" component="h2">
-            Confirm Delete
-          </Typography>
-          <Typography id="modal-delete-description" sx={{ mt: 2 }}>
-            Are you sure you want to delete this user?
-          </Typography>
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 4 }}>
-            <Button
-              variant="contained"
-              onClick={handleCancelDelete}
-              sx={{
-                mr: 2,
-                backgroundColor: '#6c757d',
-                '&:hover': { backgroundColor: '#5a6268' },
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="contained"
-              onClick={handleConfirmDelete}
-              sx={{
-                backgroundColor: '#d63384',
-                '&:hover': { backgroundColor: '#d63384' },
-              }}
-            >
-              Delete
-            </Button>
-          </Box>
         </Box>
       </Modal>
     </Container>

@@ -116,7 +116,7 @@ const ProductCategories = ({ category }) => {
           <Slider {...settings}>
             {products.map((product) => (
               <Link
-                to={`/product/${product._id}`}
+                to={`/Productpage/${product._id}`}
                 style={{
                   textDecoration: "none",
                   "&:hover": { textDecoration: "none" },
