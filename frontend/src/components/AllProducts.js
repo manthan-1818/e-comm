@@ -54,23 +54,18 @@ const AllProducts = () => {
   };
 
   const handleReadSuccess = () => {
-    // Update any state or perform actions needed upon successful file read
     setSuccessfullyReadFileCount(successfullyReadFileCount + 1);
   };
 
-  const handleReadFail = () => {
-    // Handle file read failure if needed
-  };
+  const handleReadFail = () => {};
 
-  const createHelperText = (file) => {
-    // Return helper text based on file if needed
-  };
+  const createHelperText = (file) => {};
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Your form submission logic here
+
     console.log("Form submitted");
-    // Reset form after submission
+
     resetForm();
   };
 
@@ -204,24 +199,23 @@ const AllProducts = () => {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-  <Button variant="secondary" onClick={handleClose}>
-    Close
-  </Button>
-  <Button
-    variant="contained"
-    sx={{
-      backgroundColor: "#d63384",
-      "&:hover": {
-        backgroundColor: "#d63384",
-      },
-    }}
-    type="submit"
-    onClick={handleSubmit}
-  >
-    Save Changes
-  </Button>
-</Modal.Footer>
-
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: "#d63384",
+              "&:hover": {
+                backgroundColor: "#d63384",
+              },
+            }}
+            type="submit"
+            onClick={handleSubmit}
+          >
+            Save Changes
+          </Button>
+        </Modal.Footer>
       </Modal>
     </>
   );

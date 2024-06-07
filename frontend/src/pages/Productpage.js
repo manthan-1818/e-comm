@@ -64,7 +64,7 @@ const ProductPage = () => {
             <input type="text" placeholder="Enter Delivery Pincode" />
             <button className="check-button">Check</button>
           </div>
-          {/* <hr className="blue-line" /> */}
+         
           <span className="note">Currently out of stock in this area.</span>
         </div>
         <div className="highlights">

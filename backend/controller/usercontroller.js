@@ -1,142 +1,186 @@
+const jwt = require("jsonwebtoken");
 const userService = require("../services/userservices");
 const sendVerificationEmail = require("../config/emailconfig");
-const jwt = require("jsonwebtoken");
-const User = require("../models/user");
-const TempUser = require("../models/Tempuser");
-const user = require("../models/user");
+
 const verifyKey = process.env.VERIFY_SECRET;
 const jwtKey = process.env.JWT_SECRET;
 const jwtRefreshKey = process.env.JWT_REFRESH_SECRET;
 
+const {
+  STATUS_SUCCESS,
+  STATUS_BAD_REQUEST,
+  STATUS_UNAUTHORIZED,
+  STATUS_NOT_FOUND,
+  STATUS_INTERNAL_SERVER_ERROR,
+  MSG_REGISTER_SUCCESS,
+  MSG_LOGIN_SUCCESS,
+  MSG_EMAIL_NOT_VERIFIED,
+  MSG_INCORRECT_PASSWORD,
+  MSG_USER_NOT_FOUND,
+  MSG_EMAIL_VERIFIED,
+  MSG_NO_USER_DATA_FOUND,
+  MSG_USER_UPDATED,
+  MSG_USER_DELETED,
+  MSG_ACCESS_TOKEN_REFRESHED,
+  MSG_REFRESH_TOKEN_EXPIRED,
+  MSG_INVALID_REFRESH_TOKEN,
+  MSG_INTERNAL_SERVER_ERROR,
+} = require("../constant/constantError");
+
 const userController = {
   signup: async (req, res) => {
-    const { name, email, role, password } = req.body;
     try {
-      const token = jwt.sign({ email }, verifyKey, {
-        expiresIn: "5m",
-      });
+      const { name, email, role, password } = req.body;
+      const token = jwt.sign({ email }, verifyKey, { expiresIn: "5m" });
 
-      const response = await userService.register({
+      const response = await userService.signup({
         name,
         email,
         password,
         role,
         token,
       });
-      await sendVerificationEmail(response, token);
 
-      res.status(200).json(response);
-    } catch (e) {
-      console.log("error", e);
-      res.status(500).json({ error: "internal server error" });
+      await sendVerificationEmail({ email }, token);
+
+      res.status(STATUS_SUCCESS).json({ message: MSG_REGISTER_SUCCESS });
+    } catch (error) {
+      console.error("Registration error:", error);
+      res
+        .status(STATUS_INTERNAL_SERVER_ERROR)
+        .json({ message: MSG_INTERNAL_SERVER_ERROR });
     }
   },
+
   login: async (req, res) => {
     try {
       const { email, password } = req.body;
       const userData = await userService.login({ email, password });
-      console.log("userData:", userData);
 
       if (userData.success) {
-        const expiresIn = "15m";
-
-        const email = userData.user.email;
-        const accessToken = jwt.sign({ email }, jwtKey, {
-          expiresIn,
+        const accessToken = jwt.sign({ email: userData.user.email }, jwtKey, {
+          expiresIn: process.env.ACCESS_TOKEN_EXPIRE_TIME,
         });
-
         const refreshToken = jwt.sign(
           { email: userData.user.email },
           jwtRefreshKey,
-          { expiresIn: "60m" }
+          { expiresIn: process.env.REFRESH_TOKEN_EXPIRE_TIME }
         );
 
-        res.status(200).json({
+        res.status(STATUS_SUCCESS).json({
           success: true,
-          message: userData.message,
+          message: MSG_LOGIN_SUCCESS,
           accessToken,
           refreshToken,
           user: userData.user,
         });
       } else {
-        let statusCode = 401;
-        if (userData.message === "Login failed") {
-          statusCode = 404;
-        }
+        const statusCode =
+          userData.message === MSG_USER_NOT_FOUND
+            ? STATUS_NOT_FOUND
+            : STATUS_UNAUTHORIZED;
         res
           .status(statusCode)
           .json({ success: false, message: userData.message });
       }
     } catch (error) {
-      console.error(`login controller error : ${error}`);
-      res.status(500).json({ error: "Internal server error" });
+      console.error("Login error:", error);
+      res
+        .status(STATUS_INTERNAL_SERVER_ERROR)
+        .json({ message: MSG_INTERNAL_SERVER_ERROR });
+    }
+  },
+
+  verify: async (req, res) => {
+    try {
+      const { token } = req.params;
+      const decoded = jwt.verify(token, verifyKey);
+      const user = await userService.verify({ email: decoded.email });
+
+      if (user) {
+        res.redirect(`${process.env.CLIENT_URL}/verification-mail`);
+      } else {
+        res.status(STATUS_BAD_REQUEST).json({ message: MSG_EMAIL_VERIFIED });
+      }
+    } catch (error) {
+      console.error("Verification error:", error);
+      res.status(STATUS_BAD_REQUEST).json({ message: error.message });
     }
   },
 
   getUserData: async (req, res) => {
     try {
-      const data = await userService.getUserData();
-      if (data && data.length > 0) {
-        res.status(200).json({ data });
+      const userData = await userService.getUserData();
+      if (userData && userData.length > 0) {
+        res.status(STATUS_SUCCESS).json({ data: userData });
       } else {
-        res.status(404).json({ message: "No user data found" });
+        res.status(STATUS_NOT_FOUND).json({ message: MSG_NO_USER_DATA_FOUND });
       }
-    } catch (e) {
-      res.status(500).json({ message: "internal server error" });
+    } catch (error) {
+      console.error("Get user data error:", error);
+      res
+        .status(STATUS_INTERNAL_SERVER_ERROR)
+        .json({ message: MSG_INTERNAL_SERVER_ERROR });
     }
   },
+
   updateData: async (req, res) => {
     const { id } = req.query;
     try {
       const { name, email, role } = req.body;
-      const response = await userService.updateData({
-        id,
-        name,
-        email,
-        role,
-      });
-      res.status(200).json(response);
-    } catch (e) {
-      console.log("error", e);
-      res.status(500).json({ error: "internal server error" });
+      const response = await userService.updateData({ id, name, email, role });
+      res
+        .status(STATUS_SUCCESS)
+        .json({ message: MSG_USER_UPDATED, updatedUser: response });
+    } catch (error) {
+      console.error("Update user data error:", error);
+      res
+        .status(STATUS_INTERNAL_SERVER_ERROR)
+        .json({ message: MSG_INTERNAL_SERVER_ERROR });
     }
   },
+
   deleteData: async (req, res) => {
     try {
-      const { _id } = req.query;
-
-      const blogData = await userService.deleteData(_id);
-      res.status(200).json(blogData);
+      const { id } = req.query;
+      const response = await userService.deleteData(id);
+      res
+        .status(STATUS_SUCCESS)
+        .json({ message: MSG_USER_DELETED, deletedUser: response });
     } catch (error) {
-      console.error(`deleteUserdata controller error : ${error}`);
-      res.status(500).json({ error: "Internal server error" });
+      console.error("Delete user data error:", error);
+      res
+        .status(STATUS_INTERNAL_SERVER_ERROR)
+        .json({ message: MSG_INTERNAL_SERVER_ERROR });
     }
   },
-  verify: async (req, res) => {
+
+  refreshToken: (req, res) => {
+    const refreshToken = req.headers["refresh-token"];
     try {
-      const { token } = req.params;
-      const decoded = jwt.verify(token, verifyKey);
-
-      const tempUser = await TempUser.findOne({ verificationToken: token });
-
-      if (!tempUser || tempUser.email !== decoded.email) {
-        return res.status(400).json({ message: "Invalid or expired token." });
-      }
-
-      const user = new User({
-        email: tempUser.email,
-        password: tempUser.password,
-        name: tempUser.name,
-        role: tempUser.role,
+      const decoded = jwt.verify(refreshToken, jwtRefreshKey);
+      const newAccessToken = jwt.sign({ email: decoded.email }, jwtKey, {
+        expiresIn: process.env.ACCESS_TOKEN_EXPIRE_TIME,
       });
-      await user.save();
-
-      await TempUser.deleteOne({ _id: tempUser._id });
-
-      res.redirect(`${process.env.CLIENT_URL}/verification-mail`);
+      res.status(STATUS_SUCCESS).json({
+        message: MSG_ACCESS_TOKEN_REFRESHED,
+        accessToken: newAccessToken,
+      });
     } catch (error) {
-      console.error("Verification error:", error);
-      res.status(400).json({ error: error.message });
+      if (error.name === "TokenExpiredError") {
+        res
+          .status(STATUS_UNAUTHORIZED)
+          .json({ message: MSG_REFRESH_TOKEN_EXPIRED });
+      } else if (error.name === "JsonWebTokenError") {
+        res
+          .status(STATUS_UNAUTHORIZED)
+          .json({ message: MSG_INVALID_REFRESH_TOKEN });
+      } else {
+        console.error("Error refreshing access token:", error);
+        res
+          .status(STATUS_INTERNAL_SERVER_ERROR)
+          .json({ message: MSG_INTERNAL_SERVER_ERROR });
+      }
     }
   },
 };

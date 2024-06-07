@@ -19,7 +19,7 @@ import ProductionQuantityLimitsIcon from "@mui/icons-material/ProductionQuantity
 
 const Cart = () => {
   const initialCartItems = [
-    // Sample cart items for testing
+    
     {
       _id: "1",
       productName: "Product 1",

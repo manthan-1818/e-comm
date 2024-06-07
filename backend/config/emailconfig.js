@@ -1,9 +1,11 @@
 const nodemailer = require("nodemailer");
 const fs = require("fs");
+
 const emailTemplate = fs.readFileSync(
   "/home/manthan/task/e-comm/backend/helper/images/template.html",
   "utf-8"
 );
+
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -11,7 +13,14 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS,
   },
 });
+
 const sendVerificationEmail = async (user, token) => {
+  console.log("User object:", user);
+  if (!user || !user.email) {
+    console.error("No valid email address found in user object:", user);
+    return;
+  }
+
   const url = `http://localhost:${process.env.PORT}/submit/verify/${token}`;
 
   const emailBody = emailTemplate.replace("{{verificationUrl}}", url);

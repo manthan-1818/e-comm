@@ -1,79 +1,95 @@
-const TempUser = require("../models/Tempuser");
 const User = require("../models/user");
+const {MSG_USER_NOT_FOUND, MSG_INCORRECT_PASSWORD, MSG_EMAIL_NOT_VERIFIED, MSG_LOGIN_SUCCESS} = require('../constant/constantError');
 
 const userService = {
-  register: async (userData) => {
+    signup: async ({ name, email, password, role,  token }) => {
     try {
-      const createUser = await TempUser.create({
-        name: userData.name,
-        email: userData.email,
-        password: userData.password,
-        role: userData.role,
-        verificationToken: userData.token,
+      const newUser = new User({
+        name,
+        email,
+        password,
+        role,
+        verified: false
       });
-      return createUser;
+      await newUser.save();
+      return newUser;
     } catch (error) {
-      console.log("user service register error ", error);
+      console.error('User service register error:', error);
       throw error;
     }
   },
-  login: async (userData) => {
+
+  login: async ({ email, password }) => {
     try {
-      const user = await User.findOne({ email: userData.email });
+      const user = await User.findOne({ email });
       if (!user) {
-        return { success: false, message: "Login failed" };
+        return { success: false, message: MSG_USER_NOT_FOUND };
       }
-      if (user.password === userData.password) {
-        console.log("Login successful");
-        return {
-          success: true,
-          message: "Login successful",
-          user: user,
-        };
-      } else {
-        console.log("Invalid credentials");
-        return { success: false, message: "Invalid credentials" };
+
+      if (user.password !== password) {
+        return { success: false, message: MSG_INCORRECT_PASSWORD };
       }
+
+      if (!user.verified) {
+        return { success: false, message: MSG_EMAIL_NOT_VERIFIED };
+      }
+
+      return { success: true, message: MSG_LOGIN_SUCCESS, user };
     } catch (error) {
-      console.log("userService login error:", error);
+      console.error('User service login error:', error);
       throw error;
     }
   },
+
+  verify: async ({ email }) => {
+    try {
+      const user = await User.findOne({ email });
+      if (!user) {
+        return null;
+      }
+      if (user.verified) {
+        return null;
+      }
+
+      user.verified = true;
+      await user.save();
+      return user;
+    } catch (error) {
+      console.error('User service verify error:', error);
+      throw error;
+    }
+  },
+
   getUserData: async () => {
     try {
       const userData = await User.find({});
       return userData;
-    } catch (e) {
-      throw e;
-    }
-  },
-  updateData: async ({ id, name, email, role }) => {
-    console.log("bla", id, name, email, role);
-    if (role) {
-      role = role.value;
-    }
-    try {
-      let updateFields = { name, email, role };
-
-      const updateUser = await User.findByIdAndUpdate(id, updateFields, {
-        new: true,
-      });
-
-      return updateUser;
     } catch (error) {
-      console.log("user service register error ", error);
+      console.error('Get user data error:', error);
       throw error;
     }
   },
+
+  updateData: async ({ id, name, email, role }) => {
+    try {
+      const updateFields = { name, email, role };
+      const updatedUser = await User.findByIdAndUpdate(id, updateFields, { new: true });
+      return updatedUser;
+    } catch (error) {
+      console.error('Update user data error:', error);
+      throw error;
+    }
+  },
+
   deleteData: async (id) => {
     try {
-      const deleteUserData = await User.findByIdAndDelete(id);
-      return deleteUserData;
+      const deletedUser = await User.findByIdAndDelete(id);
+      return deletedUser;
     } catch (error) {
-      console.log("getting blog Data error ", error);
+      console.error('Delete user data error:', error);
       throw error;
     }
-  },
+  }
 };
 
 module.exports = userService;

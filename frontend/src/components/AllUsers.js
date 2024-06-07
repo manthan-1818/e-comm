@@ -83,7 +83,7 @@ const AllUsers = () => {
     if (confirmDelete) {
       try {
         await deleteUserData(rowData._id);
-        fetchData(); // Refresh the data after deletion
+        fetchData(); 
       } catch (error) {
         console.error("Error deleting user:", error);
       }
@@ -97,7 +97,7 @@ const AllUsers = () => {
       </IconButton>
       <IconButton
         onClick={() => handleDeleteClick(data)}
-        disabled={currentUser._id === data._id} // Disable delete button for the current user
+        disabled={currentUser._id === data._id} 
       >
         <DeleteIcon />
       </IconButton>
@@ -106,9 +106,9 @@ const AllUsers = () => {
 
   const onSubmit = async (data) => {
     try {
-      await updateUserData(selectedUser._id, data); // Use the correct user ID for updating
+      await updateUserData(selectedUser._id, data); 
       handleClose();
-      fetchData(); // Refresh the data after update
+      fetchData(); 
     } catch (error) {
       console.error("Error updating user data:", error);
     }
