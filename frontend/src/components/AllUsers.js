@@ -15,7 +15,7 @@ import {
   fetchUserData,
   updateUserData,
   deleteUserData,
-} from "../utils/services";
+} from "../utils/services/userservices";
 import Select from "react-select";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";

@@ -1,4 +1,6 @@
 import axios from "axios";
+// import { logout } from '../../redux/slice/authSlice';
+// import store from '../../redux/store/store';
 const axiosInstance = axios.create({
   baseURL: process.env.REACT_APP_BASEURL,
 });
@@ -16,7 +18,6 @@ axiosInstance.interceptors.request.use(
       config.headers["refresh-token"] = refreshToken;
     }
 
-    console.log("Request Interceptor:", config);
     return config;
   },
   (error) => {
@@ -27,7 +28,7 @@ axiosInstance.interceptors.request.use(
 
 axiosInstance.interceptors.response.use(
   async (response) => {
-    console.log("Response Interceptor:", response);
+    // console.log("Response Interceptor:", response);
 
     if (response.data.accessToken) {
       const newAccessToken = response.data.accessToken;

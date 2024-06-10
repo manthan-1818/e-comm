@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { Button, Form, InputGroup, Modal, Col } from "react-bootstrap";
-import Dropzone from "react-dropzone";
+import { Button, Form, Modal, Col } from "react-bootstrap";
 import {
   MultipleFileUpload,
   MultipleFileUploadMain,
@@ -12,70 +11,140 @@ import {
 import UploadIcon from "@patternfly/react-icons/dist/esm/icons/upload-icon";
 import { Box } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import { useForm } from "react-hook-form";
+import { addProduct, updateProduct } from "../utils/services/productservices";
+import { useSnackbar } from "notistack";
 
 const AllProducts = () => {
   const [open, setOpen] = useState(false);
-  const [files, setFiles] = useState([]);
-  const [productName, setProductName] = useState("");
-  const [brandName, setBrandName] = useState("");
-  const [category, setCategory] = useState("");
-  const [description, setDescription] = useState("");
-  const [price, setPrice] = useState("");
-  const [showStatus, setShowStatus] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
-  const [successfullyReadFileCount, setSuccessfullyReadFileCount] = useState(0);
+  const [readFileData, setReadFileData] = useState([]);
+  const [statusIcon, setStatusIcon] = useState("inProgress");
+
+  const [showStatus, setShowStatus] = useState(false);
+  const [isUpdateMode, setIsUpdateMode] = useState(false);
+  const [currentProduct, setCurrentProduct] = useState(null);
+  const { enqueueSnackbar } = useSnackbar();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm();
+
+  const resetForm = () => {
+    reset();
+    setSelectedFiles([]);
+    setReadFileData([]);
+    setShowStatus(false);
+    setIsUpdateMode(false);
+    setCurrentProduct(null);
+  };
 
   const handleClose = () => {
     setOpen(false);
     resetForm();
   };
 
-  const resetForm = () => {
-    setFiles([]);
-    setProductName("");
-    setBrandName("");
-    setCategory("");
-    setDescription("");
-    setPrice("");
-    setShowStatus(false);
-    setSelectedFiles([]);
-    setSuccessfullyReadFileCount(0);
+  const handleFileDrop = (_event, droppedFiles) => {
+    const currentFileNames = selectedFiles.map((file) => file.name);
+    const reUploads = droppedFiles.filter((droppedFile) =>
+      currentFileNames.includes(droppedFile.name)
+    );
+    Promise.resolve()
+      .then(() => removeFiles(reUploads.map((file) => file.name)))
+      .then(() => updateCurrentFiles(droppedFiles));
   };
 
-  const handleFileDrop = (droppedFiles) => {
-    setSelectedFiles(droppedFiles);
+  const removeFiles = (namesOfFilesToRemove) => {
+    const newCurrentFiles = selectedFiles.filter(
+      (currentFile) =>
+        !namesOfFilesToRemove.some((fileName) => fileName === currentFile.name)
+    );
+    setSelectedFiles(newCurrentFiles);
+    const newReadFiles = readFileData.filter(
+      (readFile) =>
+        !namesOfFilesToRemove.some((fileName) => fileName === readFile.fileName)
+    );
+    setReadFileData(newReadFiles);
+  };
+
+  const updateCurrentFiles = (files) => {
+    setSelectedFiles((prevFiles) => [...prevFiles, ...files]);
     setShowStatus(true);
   };
 
-  const removeFiles = (fileNamesToRemove) => {
-    setSelectedFiles(
-      selectedFiles.filter((file) => !fileNamesToRemove.includes(file.name))
+  const handleReadSuccess = (data, file) => {
+    setReadFileData((prevReadFiles) => [
+      ...prevReadFiles,
+      { data, fileName: file.name, loadResult: "success" },
+    ]);
+  };
+
+  const handleReadFail = (error, file) => {
+    setReadFileData((prevReadFiles) => [
+      ...prevReadFiles,
+      { loadError: error, fileName: file.name, loadResult: "danger" },
+    ]);
+  };
+
+  const createHelperText = (file) => {
+    const fileResult = readFileData.find(
+      (readFile) => readFile.fileName === file.name
     );
+    if (fileResult?.loadError) {
+      return (
+        <HelperText isLiveRegion>
+          <HelperTextItem variant="error">
+            {fileResult.loadError.toString()}
+          </HelperTextItem>
+        </HelperText>
+      );
+    }
   };
-
-  const handleReadSuccess = () => {
-    setSuccessfullyReadFileCount(successfullyReadFileCount + 1);
+  const onSubmit = async (data) => {
+    try {
+      const formData = new FormData();
+  
+      formData.append("productName", data.productName);
+      formData.append("brandName", data.brandName);
+      formData.append("category", data.category);
+      formData.append("description", data.description);
+      formData.append("price", data.price);
+  
+      Array.from(selectedFiles).forEach((file) => {
+        formData.append("images", file);
+      });
+  
+      console.log("Form Data:", formData);
+  
+      if (isUpdateMode) {
+        formData.append("productId", currentProduct._id);
+        await updateProduct(formData);
+      } else {
+        await addProduct(formData);
+      }
+  
+      handleClose();
+      resetForm();
+    } catch (error) {
+      console.error("Submission error:", error);  // Log the entire error object
+  
+      // Extract the error message from different possible structures
+      const errorMessage = error?.response?.data?.message || error?.message || "Unknown error occurred";
+      enqueueSnackbar(`Error submitting product: ${errorMessage}`, {
+        variant: "error",
+      });
+    }
   };
-
-  const handleReadFail = () => {};
-
-  const createHelperText = (file) => {};
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-
-    console.log("Form submitted");
-
-    resetForm();
-  };
+  
+  
 
   return (
     <>
       <Button
         variant="contained"
-        onClick={() => {
-          setOpen(true);
-        }}
+        onClick={() => setOpen(true)}
         style={{
           position: "absolute",
           top: "100px",
@@ -87,27 +156,33 @@ const AllProducts = () => {
           border: "none",
         }}
       >
-        Add Product
+        <AddIcon fontSize="small" /> Add Product
       </Button>
 
       <Modal show={open} onHide={handleClose} size="lg" centered>
         <Modal.Header>
-          <Modal.Title>Add Product</Modal.Title>
+          <Modal.Title>
+            {isUpdateMode ? "Update Product" : "Add Product"}
+          </Modal.Title>
           <button className="btn btn-lg close" onClick={handleClose}>
             <span aria-hidden="true">&times;</span>
           </button>
         </Modal.Header>
 
         <Modal.Body>
-          <Form onSubmit={handleSubmit}>
+          <Form onSubmit={handleSubmit(onSubmit)}>
             <Form.Group controlId="productName">
               <Form.Label>Product Name</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter product name"
-                value={productName}
-                onChange={(e) => setProductName(e.target.value)}
+                {...register("productName", { required: true })}
               />
+              {errors.productName && (
+                <Form.Text className="text-danger">
+                  Product name is required.
+                </Form.Text>
+              )}
             </Form.Group>
 
             <Form.Group controlId="brandName">
@@ -115,9 +190,13 @@ const AllProducts = () => {
               <Form.Control
                 type="text"
                 placeholder="Enter brand name"
-                value={brandName}
-                onChange={(e) => setBrandName(e.target.value)}
+                {...register("brandName", { required: true })}
               />
+              {errors.brandName && (
+                <Form.Text className="text-danger">
+                  Brand name is required.
+                </Form.Text>
+              )}
             </Form.Group>
 
             <Form.Group controlId="category">
@@ -125,9 +204,13 @@ const AllProducts = () => {
               <Form.Control
                 type="text"
                 placeholder="Enter category"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
+                {...register("category", { required: true })}
               />
+              {errors.category && (
+                <Form.Text className="text-danger">
+                  Category is required.
+                </Form.Text>
+              )}
             </Form.Group>
 
             <Form.Group controlId="description">
@@ -136,9 +219,13 @@ const AllProducts = () => {
                 as="textarea"
                 rows={4}
                 placeholder="Enter description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                {...register("description", { required: true })}
               />
+              {errors.description && (
+                <Form.Text className="text-danger">
+                  Description is required.
+                </Form.Text>
+              )}
             </Form.Group>
 
             <Form.Group controlId="price">
@@ -146,12 +233,13 @@ const AllProducts = () => {
               <Form.Control
                 type="text"
                 placeholder="Enter price"
-                value={price}
-                onChange={(e) => {
-                  const inputPrice = e.target.value.replace(/[^0-9.]/g, "");
-                  setPrice(inputPrice);
-                }}
+                {...register("price", { required: true })}
               />
+              {errors.price && (
+                <Form.Text className="text-danger">
+                  Price is required.
+                </Form.Text>
+              )}
             </Form.Group>
 
             <Form.Label column sm={0}>
@@ -174,48 +262,38 @@ const AllProducts = () => {
                     titleIcon={<UploadIcon />}
                     titleText="Drag and drop files here"
                     titleTextSeparator="or"
-                    infoText="Accepted file types: JPEG, Doc, PDF, PNG"
+                    infoText="Accepted file types: doc, docx, pdf, jpg, png"
                   />
+                  {showStatus && (
+                    <MultipleFileUploadStatus
+                      statusToggleText={`${selectedFiles.length} files uploaded`}
+                      statusToggleIcon={statusIcon}
+                    >
+                      {selectedFiles.map((f) => (
+                        <MultipleFileUploadStatusItem
+                          key={f.name}
+                          file={f}
+                          onClearClick={() => removeFiles([f.name])}
+                        >
+                          {createHelperText(f)}
+                        </MultipleFileUploadStatusItem>
+                      ))}
+                    </MultipleFileUploadStatus>
+                  )}
                 </Box>
-                {showStatus && (
-                  <MultipleFileUploadStatus
-                    statusToggleText={`${successfullyReadFileCount} of ${selectedFiles.length} files uploaded`}
-                    aria-label="Current uploads"
-                  >
-                    {selectedFiles.map((file) => (
-                      <MultipleFileUploadStatusItem
-                        file={file}
-                        key={file.name}
-                        onClearClick={() => removeFiles([file.name])}
-                        onReadSuccess={handleReadSuccess}
-                        onReadFail={handleReadFail}
-                        progressHelperText={createHelperText(file)}
-                      />
-                    ))}
-                  </MultipleFileUploadStatus>
-                )}
               </MultipleFileUpload>
             </Col>
+
+            <Modal.Footer>
+              <Button variant="secondary" onClick={handleClose}>
+                Cancel
+              </Button>
+              <Button type="submit" variant="primary">
+                {isUpdateMode ? "Update Product" : "Add Product"}
+              </Button>
+            </Modal.Footer>
           </Form>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-          <Button
-            variant="contained"
-            sx={{
-              backgroundColor: "#d63384",
-              "&:hover": {
-                backgroundColor: "#d63384",
-              },
-            }}
-            type="submit"
-            onClick={handleSubmit}
-          >
-            Save Changes
-          </Button>
-        </Modal.Footer>
       </Modal>
     </>
   );

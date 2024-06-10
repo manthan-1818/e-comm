@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
-import axiosInstance from "../utils/axios";
+import axiosInstance from "../utils/services/axios";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { loginSuccess, loginFailure } from "../redux/slice/authSlice";
-import { set_token } from "../utils/services";
+import { set_token } from "../utils/services/userservices";
 import "../css/Login.css";
 
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../css/Signup.css";
-import axiosInstance from "../utils/axios";
+import axiosInstance from "../utils/services/axios";
 
 const Signup = () => {
   const [email, setEmail] = useState("");

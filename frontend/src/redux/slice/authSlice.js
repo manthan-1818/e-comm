@@ -9,7 +9,7 @@ import {
   set_token,
   get_token,
   remove_token,
-} from "../../utils/services";
+} from "../../utils/services/userservices";
 
 const initialState = {
   isAuthenticated: get_is_authenticated() ? get_is_authenticated() : false,
