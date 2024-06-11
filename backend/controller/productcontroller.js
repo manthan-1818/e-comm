@@ -1,3 +1,5 @@
+// controller/productController.js
+
 const Product = require("../models/product.js");
 const {
   STATUS_SUCCESS,
@@ -9,7 +11,20 @@ const {
   MSG_INTERNAL_SERVER_ERROR,
   MSG_PRODUCT_ADDED,
   MSG_PRODUCT_UPDATED,
+  MSG_PRODUCT_DELETED,
+  MSG_PRODUCT_NOT_FOUND,
 } = require("../constant/constantError.js");
+
+exports.getProducts = async (req, res) => {
+  try {
+    const products = await Product.find({});
+    console.log("product",products);
+    res.status(STATUS_SUCCESS).json(products);
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    res.status(STATUS_INTERNAL_SERVER_ERROR).json({ message: MSG_INTERNAL_SERVER_ERROR });
+  }
+};
 
 exports.addProduct = async (req, res) => {
   try {
@@ -21,7 +36,11 @@ exports.addProduct = async (req, res) => {
     }
 
     const { productName, brandName, category, description, price } = req.body;
-    const imageUrl = req.files.map((file) => file.path);
+    
+    
+    const imageUrls = req.files.map((file) => {
+      return `http://localhost:5000/uploads/${file.originalname}`;
+    });
 
     const newProduct = new Product({
       productName,
@@ -29,54 +48,53 @@ exports.addProduct = async (req, res) => {
       category,
       description,
       price,
-      productImage: imageUrl,
+      productImage: imageUrls, 
     });
 
     const createdProduct = await newProduct.save();
+
     res.status(STATUS_CREATED).json({ message: MSG_PRODUCT_ADDED, newProduct });
   } catch (error) {
     console.error("Error adding product:", error);
-    res.status(STATUS_INTERNAL_SERVER_ERROR).json({ message: MSG_INTERNAL_SERVER_ERROR, error: error.message });
+    res.status(STATUS_INTERNAL_SERVER_ERROR).json({ message: MSG_INTERNAL_SERVER_ERROR });
   }
 };
 
+exports.updateProduct = async (req, res) => {
+  try {
+    const { productId, productName, brandName, category, description, price } = req.body;
 
-  exports.updateProduct = async (req, res) => {
-    try {
-      const { productId, productName, brandName, category, description, price } = req.body;
-  
-      const imageUrl = req.files ? req.files.map((file) => file.path) : undefined;
-  
-      const updateFields = {
-        productName,
-        brandName,
-        category,
-        description,
-        price,
-      };
-  
-      if (imageUrl && imageUrl.length > 0) {
-        updateFields.productImage = imageUrl;
-      }
-  
-      const updatedProduct = await Product.findByIdAndUpdate(
-        productId,
-        updateFields,
-        { new: true }
-      );
-  
-      if (!updatedProduct) {
-        return res.status(STATUS_NOT_FOUND).json({ message: MSG_PRODUCT_NOT_FOUND });
-      }
-  
-      res.status(STATUS_SUCCESS).json({ message: MSG_PRODUCT_UPDATED, updatedProduct });
-    } catch (e) {
-      console.error("Error updating product:", e);
-      res.status(STATUS_INTERNAL_SERVER_ERROR).json({ message: MSG_INTERNAL_SERVER_ERROR, error: e.message });
+    const imageUrl = req.files ? req.files.map((file) => file.path) : undefined;
+
+    const updateFields = {
+      productName,
+      brandName,
+      category,
+      description,
+      price,
+    };
+
+    if (imageUrl && imageUrl.length > 0) {
+      updateFields.productImage = imageUrl;
     }
-  };
-  
-  
+
+    const updatedProduct = await Product.findByIdAndUpdate(
+      productId,
+      updateFields,
+      { new: true }
+    );
+
+    if (!updatedProduct) {
+      return res.status(STATUS_NOT_FOUND).json({ message: MSG_PRODUCT_NOT_FOUND });
+    }
+
+    res.status(STATUS_SUCCESS).json({ message: MSG_PRODUCT_UPDATED, updatedProduct });
+  } catch (error) {
+    console.error("Error updating product:", error);
+    res.status(STATUS_INTERNAL_SERVER_ERROR).json({ message: MSG_INTERNAL_SERVER_ERROR });
+  }
+};
+
 exports.deleteProduct = async (req, res) => {
   try {
     const { id } = req.query;
@@ -87,9 +105,7 @@ exports.deleteProduct = async (req, res) => {
       res.status(STATUS_NOT_FOUND).json({ message: MSG_PRODUCT_NOT_FOUND });
     }
   } catch (error) {
-    console.error(`Delete product controller error: ${error}`);
-    res
-      .status(STATUS_INTERNAL_SERVER_ERROR)
-      .json({ message: MSG_INTERNAL_SERVER_ERROR });
+    console.error("Delete product controller error:", error);
+    res.status(STATUS_INTERNAL_SERVER_ERROR).json({ message: MSG_INTERNAL_SERVER_ERROR });
   }
 };
