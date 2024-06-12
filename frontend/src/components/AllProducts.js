@@ -20,7 +20,12 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useForm } from "react-hook-form";
-import { getProducts, addProduct, updateProduct, deleteProduct } from "../utils/services/productservices";
+import {
+  getProducts,
+  addProduct,
+  updateProduct,
+  deleteProduct,
+} from "../utils/services/productservices";
 import { useSnackbar } from "notistack";
 
 const AllProducts = () => {
@@ -46,6 +51,7 @@ const AllProducts = () => {
   const fetchProducts = async () => {
     try {
       const fetchedProducts = await getProducts();
+      console.log("Fetched products:", fetchedProducts);
       setProducts(fetchedProducts);
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -85,11 +91,11 @@ const AllProducts = () => {
         !namesOfFilesToRemove.some((fileName) => fileName === currentFile.name)
     );
     setSelectedFiles(newCurrentFiles);
-    const newReadFiles = readFileData.filter(
+    const newReadFileData = readFileData.filter(
       (readFile) =>
         !namesOfFilesToRemove.some((fileName) => fileName === readFile.fileName)
     );
-    setReadFileData(newReadFiles);
+    setReadFileData(newReadFileData);
   };
 
   const updateCurrentFiles = (files) => {
@@ -162,25 +168,28 @@ const AllProducts = () => {
 
   const handleUpdateProduct = async (productId) => {
     try {
-      // Implement your own logic to fetch a single product by ID here
-      // Example: const product = await fetchProduct(productId);
-      // setCurrentProduct(product.data);
+      const product = products.find((prod) => prod._id === productId); // Assuming product data is already fetched in `products`
+      setCurrentProduct(product);
       setIsUpdateMode(true);
+      reset(product); // Set form default values to the product's current data
       setOpen(true);
-      // reset(product.data);
     } catch (error) {
-      enqueueSnackbar(`Error submitting product: ${error.message}`, { variant: 'error' });
+      enqueueSnackbar(`Error loading product data: ${error.message}`, {
+        variant: "error",
+      });
     }
   };
 
   const handleRemoveProduct = async (productId) => {
-    const confirmation = window.confirm('Are you sure you want to delete it?');
+    const confirmation = window.confirm("Are you sure you want to delete it?");
     if (confirmation) {
       try {
         await deleteProduct(productId);
         fetchProducts(); // Assuming this function reloads the products
       } catch (error) {
-        enqueueSnackbar(`Error deleting product: ${error.message}`, { variant: 'error' });
+        enqueueSnackbar(`Error deleting product: ${error.message}`, {
+          variant: "error",
+        });
       }
     }
   };
@@ -228,7 +237,7 @@ const AllProducts = () => {
               <Form.Control
                 type="text"
                 placeholder="Enter product name"
-                {...register("productName", { required: true })}
+                {...register("productName", { required: !isUpdateMode })}
               />
               {errors.productName && (
                 <Form.Text className="text-danger">
@@ -242,7 +251,7 @@ const AllProducts = () => {
               <Form.Control
                 type="text"
                 placeholder="Enter brand name"
-                {...register("brandName", { required: true })}
+                {...register("brandName", { required: !isUpdateMode })}
               />
               {errors.brandName && (
                 <Form.Text className="text-danger">
@@ -256,7 +265,7 @@ const AllProducts = () => {
               <Form.Control
                 type="text"
                 placeholder="Enter category"
-                {...register("category", { required: true })}
+                {...register("category", { required: !isUpdateMode })}
               />
               {errors.category && (
                 <Form.Text className="text-danger">
@@ -271,7 +280,7 @@ const AllProducts = () => {
                 as="textarea"
                 rows={4}
                 placeholder="Enter description"
-                {...register("description", { required: true })}
+                {...register("description", { required: !isUpdateMode })}
               />
               {errors.description && (
                 <Form.Text className="text-danger">
@@ -285,7 +294,7 @@ const AllProducts = () => {
               <Form.Control
                 type="text"
                 placeholder="Enter price"
-                {...register("price", { required: true })}
+                {...register("price", { required: !isUpdateMode })}
               />
               {errors.price && (
                 <Form.Text className="text-danger">
@@ -349,52 +358,63 @@ const AllProducts = () => {
       </Modal>
 
       <Container>
-        <Grid container spacing={3} style={{ marginTop: "20px" }}>
-          {products.length > 0 ? (
-            products.map((product) => (
-              <Grid item key={product._id} xs={12} sm={6} md={4} lg={3}>
-                <Card>
-                  <CardMedia
-                    component="img"
-                    height="140"
-                    image={`${product.productImage[0]}`}
-                    alt={product.productName}
-                  />
-
-                  <CardContent>
-                    <Typography variant="h6" component="div" gutterBottom>
-                      {product.productName}
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      paragraph
-                    >
-                      {product.description}
-                    </Typography>
-                    <Box
-                      display="flex"
-                      justifyContent="space-between"
-                      alignItems="center"
-                    >
-                      <Typography variant="body1" color="text.primary">
-                        ${product.price}
-                      </Typography>
-                      <Typography variant="body1" color="text.secondary">
-                        {product.rating} ★
-                      </Typography>
-                    </Box>
-                    <Button variant="contained" onClick={() => handleUpdateProduct(product._id)}>Edit</Button>
-                    <Button variant="contained" onClick={() => handleRemoveProduct(product._id)}>Delete</Button>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))
-          ) : (
-            <Typography variant="body1">No products available</Typography>
-          )}
+  <Grid container spacing={3} style={{ marginTop: "20px" }}>
+    {products.length > 0 ? (
+      products.map((product) => (
+        <Grid item key={product._id} xs={12} sm={6} md={4} lg={3}>
+          <Card>
+            <CardMedia
+              component="img"
+              height="140"
+              image={product.productImage[0]}
+              alt={product.productName}
+            />
+            <CardContent>
+              <Typography variant="h6" component="div" gutterBottom>
+                {product.productName}
+              </Typography>
+              <Typography variant="body2" color="text.secondary" paragraph>
+                {product.description}
+              </Typography>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography variant="body1" color="text.primary">
+                  ${product.price}
+                </Typography>
+                <Typography variant="body1" color="text.secondary">
+                  {product.rating} ★
+                </Typography>
+                <div>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleUpdateProduct(product._id)}
+                    style={{ marginRight: "8px" }}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => handleRemoveProduct(product._id)}
+                  >
+                    Delete
+                  </Button>
+                </div>
+              </Box>
+            </CardContent>
+          </Card>
         </Grid>
-      </Container>
+      ))
+    ) : (
+      <Typography variant="body1">No products available</Typography>
+    )}
+  </Grid>
+</Container>
+
     </>
   );
 };
