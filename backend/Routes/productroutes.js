@@ -36,6 +36,8 @@ const uploadProductImages = require("../config/multerconfig.js");
 
 productRouter.get("/get-products", getProducts);
 
+productRouter.get('/fetch-product-by-category', fetchProductsByCategory);
+
 productRouter.post("/add-product", uploadProductImages, addProduct);
 
 productRouter.patch("/update-product", uploadProductImages, updateProduct);

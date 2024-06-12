@@ -4,7 +4,7 @@ import axiosInstance from "../services/axios";
 
 export const getProducts = async () => {
   try {
-    const response = await axiosInstance.get('/product/get-products');
+    const response = await axiosInstance.get("/product/get-products");
     console.log("producr", response.data[0].productImage);
     return response.data;
   } catch (error) {
@@ -13,13 +13,29 @@ export const getProducts = async () => {
   }
 };
 
+export const fetchProductsByCategory = async (category) => {
+  const response = await axiosInstance.get(
+    `/product/fetch-product-by-category?category=${category}`
+  );
+  return response.data;
+};
+
+export const fetchCategoryProducts = async () => {
+  const response = await axiosInstance.get(`/product/fetch-category-product`);
+  return response.data;
+};
+
 export const addProduct = async (formData) => {
   try {
-    const response = await axiosInstance.post("/product/add-product", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    const response = await axiosInstance.post(
+      "/product/add-product",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
     return response.data;
   } catch (error) {
     console.error("Error adding product:", error);
@@ -29,11 +45,15 @@ export const addProduct = async (formData) => {
 
 export const updateProduct = async (formData) => {
   try {
-    const response = await axiosInstance.patch("/product/update-product", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    const response = await axiosInstance.patch(
+      "/product/update-product",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
     return response.data;
   } catch (error) {
     console.error("Error updating product:", error);
@@ -43,7 +63,9 @@ export const updateProduct = async (formData) => {
 
 export const deleteProduct = async (productId) => {
   try {
-    const response = await axiosInstance.delete(`/product/delete-product?id=${productId}`);
+    const response = await axiosInstance.delete(
+      `/product/delete-product?id=${productId}`
+    );
     return response.data;
   } catch (error) {
     console.error("Error deleting product:", error);

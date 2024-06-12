@@ -37,9 +37,9 @@ const style = {
 const AllUsers = () => {
   const [rowData, setRowData] = useState(null);
   const [open, setOpen] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [userToDelete, setUserToDelete] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const currentUser = useSelector((state) => state.auth.user);
   const {
     register,
@@ -55,6 +55,7 @@ const AllUsers = () => {
     setOpen(true);
     reset(data);
   };
+
   const handleClose = () => setOpen(false);
 
   const fetchData = async () => {
@@ -78,16 +79,9 @@ const AllUsers = () => {
     handleOpen(rowData);
   };
 
-  const handleDeleteClick = async (rowData) => {
-    const confirmDelete = window.confirm("Are you sure you want to delete?");
-    if (confirmDelete) {
-      try {
-        await deleteUserData(rowData._id);
-        fetchData(); 
-      } catch (error) {
-        console.error("Error deleting user:", error);
-      }
-    }
+  const handleDeleteClick = (rowData) => {
+    setUserToDelete(rowData);
+    setShowDeleteModal(true);
   };
 
   const ActionRenderer = ({ data }) => (
@@ -97,7 +91,7 @@ const AllUsers = () => {
       </IconButton>
       <IconButton
         onClick={() => handleDeleteClick(data)}
-        disabled={currentUser._id === data._id} 
+        disabled={currentUser._id === data._id}
       >
         <DeleteIcon />
       </IconButton>
@@ -106,9 +100,9 @@ const AllUsers = () => {
 
   const onSubmit = async (data) => {
     try {
-      await updateUserData(selectedUser._id, data); 
+      await updateUserData(selectedUser._id, data);
       handleClose();
-      fetchData(); 
+      fetchData();
     } catch (error) {
       console.error("Error updating user data:", error);
     }
@@ -135,6 +129,25 @@ const AllUsers = () => {
       maxWidth: 195,
     },
   ];
+
+  const handleDeleteModalOpen = (rowData) => {
+    setUserToDelete(rowData);
+    setShowDeleteModal(true);
+  };
+
+  const handleDeleteModalClose = () => {
+    setShowDeleteModal(false);
+  };
+
+  const handleDeleteConfirmed = async () => {
+    try {
+      await deleteUserData(userToDelete._id);
+      setShowDeleteModal(false);
+      fetchData();
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    }
+  };
 
   return (
     <Container maxWidth="xl">
@@ -201,6 +214,29 @@ const AllUsers = () => {
               Save
             </Button>
           </form>
+        </Box>
+      </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        open={showDeleteModal}
+        onClose={handleDeleteModalClose}
+        aria-labelledby="delete-modal-title"
+        aria-describedby="delete-modal-description"
+      >
+        <Box sx={style}>
+          <Typography variant="h6" component="h2" id="delete-modal-title">
+            Confirm Deletion
+          </Typography>
+          <Typography id="delete-modal-description">
+            Are you sure you want to delete {userToDelete && userToDelete.name}?
+          </Typography>
+          <Button onClick={handleDeleteConfirmed} color="primary">
+            Delete
+          </Button>
+          <Button onClick={handleDeleteModalClose} color="secondary">
+            Cancel
+          </Button>
         </Box>
       </Modal>
     </Container>

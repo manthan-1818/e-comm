@@ -17,8 +17,11 @@ import {
   CardContent,
   Typography,
   Box,
+  IconButton,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { useForm } from "react-hook-form";
 import {
   getProducts,
@@ -27,6 +30,7 @@ import {
   deleteProduct,
 } from "../utils/services/productservices";
 import { useSnackbar } from "notistack";
+import "../css/AllProduct.css";
 
 const AllProducts = () => {
   const [open, setOpen] = useState(false);
@@ -62,18 +66,42 @@ const AllProducts = () => {
   };
 
   const resetForm = () => {
-    reset();
+    reset({
+      productName: "",
+      brandName: "",
+      category: "",
+      description: "",
+      price: "",
+    });
     setSelectedFiles([]);
     setReadFileData([]);
     setShowStatus(false);
     setIsUpdateMode(false);
     setCurrentProduct(null);
+    console.log("resetForm");
   };
-
+  
   const handleClose = () => {
+    console.log("add close", currentProduct);
     setOpen(false);
     resetForm();
   };
+  
+  
+  const handleUpdateClose = () => {
+    console.log("update close ", currentProduct);
+    setOpen(false);
+    resetForm();
+   
+  };
+  
+
+  const handleAddProduct = () => {
+    setOpen(true);
+    resetForm();
+    console.log("add product");
+  };
+  
 
   const handleFileDrop = (_event, droppedFiles) => {
     const currentFileNames = selectedFiles.map((file) => file.name);
@@ -148,11 +176,13 @@ const AllProducts = () => {
       if (isUpdateMode) {
         formData.append("productId", currentProduct._id);
         await updateProduct(formData);
+        handleUpdateClose();
+
       } else {
         await addProduct(formData);
+        handleClose();
       }
 
-      handleClose();
       resetForm();
       fetchProducts();
     } catch (error) {
@@ -168,10 +198,13 @@ const AllProducts = () => {
 
   const handleUpdateProduct = async (productId) => {
     try {
-      const product = products.find((prod) => prod._id === productId); // Assuming product data is already fetched in `products`
+
+      const product = products.find((prod) => prod._id === productId);
+      console.log("ppp",product);
       setCurrentProduct(product);
       setIsUpdateMode(true);
-      reset(product); // Set form default values to the product's current data
+      reset(product);
+
       setOpen(true);
     } catch (error) {
       enqueueSnackbar(`Error loading product data: ${error.message}`, {
@@ -185,7 +218,7 @@ const AllProducts = () => {
     if (confirmation) {
       try {
         await deleteProduct(productId);
-        fetchProducts(); // Assuming this function reloads the products
+        fetchProducts();
       } catch (error) {
         enqueueSnackbar(`Error deleting product: ${error.message}`, {
           variant: "error",
@@ -198,7 +231,7 @@ const AllProducts = () => {
     <>
       <Button
         variant="contained"
-        onClick={() => setOpen(true)}
+        onClick={() => handleAddProduct(onSubmit)}
         style={{
           position: "fixed",
           top: "100px",
@@ -225,9 +258,12 @@ const AllProducts = () => {
           <Modal.Title>
             {isUpdateMode ? "Update Product" : "Add Product"}
           </Modal.Title>
-          <button className="btn btn-lg close" onClick={handleClose}>
+          {isUpdateMode ? <button className="btn btn-lg close" onClick={handleUpdateClose}>
             <span aria-hidden="true">&times;</span>
-          </button>
+          </button> : <button className="btn btn-lg close" onClick={handleClose}>
+            <span aria-hidden="true">&times;</span>
+          </button>}
+          
         </Modal.Header>
 
         <Modal.Body>
@@ -327,10 +363,10 @@ const AllProducts = () => {
                   />
                   {showStatus && (
                     <MultipleFileUploadStatus
-                      statusToggleText={`${selectedFiles.length} files uploaded`}
+                      statusToggleText={`${selectedFiles?.length} files uploaded`}
                       statusToggleIcon="inProgress"
                     >
-                      {selectedFiles.map((f) => (
+                      {selectedFiles?.map((f) => (
                         <MultipleFileUploadStatusItem
                           key={f.name}
                           file={f}
@@ -358,63 +394,61 @@ const AllProducts = () => {
       </Modal>
 
       <Container>
-  <Grid container spacing={3} style={{ marginTop: "20px" }}>
-    {products.length > 0 ? (
-      products.map((product) => (
-        <Grid item key={product._id} xs={12} sm={6} md={4} lg={3}>
-          <Card>
-            <CardMedia
-              component="img"
-              height="140"
-              image={product.productImage[0]}
-              alt={product.productName}
-            />
-            <CardContent>
-              <Typography variant="h6" component="div" gutterBottom>
-                {product.productName}
-              </Typography>
-              <Typography variant="body2" color="text.secondary" paragraph>
-                {product.description}
-              </Typography>
-              <Box
-                display="flex"
-                justifyContent="space-between"
-                alignItems="center"
-              >
-                <Typography variant="body1" color="text.primary">
-                  ${product.price}
-                </Typography>
-                <Typography variant="body1" color="text.secondary">
-                  {product.rating} ★
-                </Typography>
-                <div>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => handleUpdateProduct(product._id)}
-                    style={{ marginRight: "8px" }}
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={() => handleRemoveProduct(product._id)}
-                  >
-                    Delete
-                  </Button>
-                </div>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-      ))
-    ) : (
-      <Typography variant="body1">No products available</Typography>
-    )}
-  </Grid>
-</Container>
+        <Grid container spacing={3} style={{ marginTop: "20px" }}>
+          {products?.length > 0 ? (
+            products.map((product) => (
+              <Grid item key={product._id} xs={12} sm={6} md={4} lg={3}>
+                <Card className="product-card">
+                  <CardMedia
+                    component="img"
+                    height="140"
+                    image={product.productImage[0]}
+                    alt={product.productName}
+                    className="product-image-container"
+                  />
+                  <CardContent>
+                    <Typography
+                      variant="h6"
+                      component="div"
+                      gutterBottom
+                      style={{ fontSize: "1rem" }}
+                    >
+                      {product.productName}
+                    </Typography>
 
+                    <Box
+                      display="flex"
+                      justifyContent="space-between"
+                      alignItems="center"
+                    >
+                      <Typography variant="body1" color="text.primary">
+                        ${product.price}
+                      </Typography>
+                      <div>
+                        <IconButton
+                          color="primary"
+                          onClick={() => handleUpdateProduct(product._id)}
+                        >
+                          <EditIcon />
+                        </IconButton>
+                        <IconButton
+  color="error"
+  onClick={() => handleRemoveProduct(product._id)}
+>
+  <DeleteIcon />
+</IconButton>
+
+                      </div>
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))
+          ) : (
+            <Typography variant="body1">No products available</Typography>
+          )}
+        </Grid>
+      </Container>
     </>
   );
 };

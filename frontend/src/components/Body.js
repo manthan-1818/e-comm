@@ -27,19 +27,19 @@ const Body = () => {
         </Carousel.Item>
       </Carousel>
       <Container className="my-4">
-        <Typography variant="h5">Best Of Electronics</Typography>
+        <Typography variant="h5">NIKE</Typography>
       </Container>
       <ProductCategories />
       <Container className="my-4">
-        <Typography variant="h5">Best Of Mobiles</Typography>
+        <Typography variant="h5">APPLE</Typography>
       </Container>
       <ProductCategories />
       <Container className="my-4">
-        <Typography variant="h5">Beauty, Food, Toys & more</Typography>
+        <Typography variant="h5">Jack & Jones</Typography>
       </Container>
       <ProductCategories />
     </div>
   );
-};
+};  
 
 export default Body;

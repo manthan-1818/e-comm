@@ -28,6 +28,56 @@ exports.getProducts = async (req, res) => {
   }
 };
 
+exports.fetchCategoryProduct = async(_req, res) => {
+  try {
+    const productCategory = await Product.distinct('category');
+
+    const productByCategory = [];
+    for (const category of productCategory) {
+      const product = await Product.findOne({ category });
+      if (product) {
+        productByCategory.push(product);
+      }
+    }
+    res.status(STATUS_SUCCESS).json({
+      message: MSG_CATEGORY_PRODUCTS_FETCHED,
+      data: productByCategory,
+      success: true,
+      error: false
+    });
+  } catch (err) {
+    res.status(STATUS_BAD_REQUEST).json({
+      message: err.message || err,
+      error: true,
+      success: false
+    });
+  }
+};
+
+exports.fetchProductsByCategory = async(req, res) => {
+  const { category } = req.query;
+  try {
+    const response = await Product.find({ category });
+    if (response.length > 0) {
+      res.status(STATUS_SUCCESS).json({
+        message: MSG_CATEGORY_PRODUCTS_FETCHED,
+        data: response,
+        success: true,
+        error: false
+      });
+    } else {
+      res.status(STATUS_NOT_FOUND).json({ message: MSG_CATEGORY_NOT_FOUND });
+    }
+  } catch (e) {
+    res.status(STATUS_BAD_REQUEST).json({
+      message: e.message || e,
+      error: true,
+      success: false
+    });
+  }
+};
+
+
 exports.addProduct = async (req, res) => {
   try {
     console.log("Received form data:", req.body);
