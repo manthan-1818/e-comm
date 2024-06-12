@@ -18,11 +18,13 @@ const {
 exports.getProducts = async (req, res) => {
   try {
     const products = await Product.find({});
-    console.log("product",products);
+    console.log("product", products);
     res.status(STATUS_SUCCESS).json(products);
   } catch (error) {
     console.error("Error fetching products:", error);
-    res.status(STATUS_INTERNAL_SERVER_ERROR).json({ message: MSG_INTERNAL_SERVER_ERROR });
+    res
+      .status(STATUS_INTERNAL_SERVER_ERROR)
+      .json({ message: MSG_INTERNAL_SERVER_ERROR });
   }
 };
 
@@ -36,8 +38,7 @@ exports.addProduct = async (req, res) => {
     }
 
     const { productName, brandName, category, description, price } = req.body;
-    
-    
+
     const imageUrls = req.files.map((file) => {
       return `http://localhost:5000/uploads/${file.originalname}`;
     });
@@ -48,7 +49,7 @@ exports.addProduct = async (req, res) => {
       category,
       description,
       price,
-      productImage: imageUrls, 
+      productImage: imageUrls,
     });
 
     const createdProduct = await newProduct.save();
@@ -56,15 +57,20 @@ exports.addProduct = async (req, res) => {
     res.status(STATUS_CREATED).json({ message: MSG_PRODUCT_ADDED, newProduct });
   } catch (error) {
     console.error("Error adding product:", error);
-    res.status(STATUS_INTERNAL_SERVER_ERROR).json({ message: MSG_INTERNAL_SERVER_ERROR });
+    res
+      .status(STATUS_INTERNAL_SERVER_ERROR)
+      .json({ message: MSG_INTERNAL_SERVER_ERROR });
   }
 };
 
 exports.updateProduct = async (req, res) => {
   try {
-    const { productId, productName, brandName, category, description, price } = req.body;
+    const { productId, productName, brandName, category, description, price } =
+      req.body;
 
-    const imageUrl = req.files ? req.files.map((file) => file.path) : undefined;
+    const imageUrls = req.files.map((file) => {
+      return `http://localhost:5000/uploads/${file.originalname}`;
+    });
 
     const updateFields = {
       productName,
@@ -74,8 +80,8 @@ exports.updateProduct = async (req, res) => {
       price,
     };
 
-    if (imageUrl && imageUrl.length > 0) {
-      updateFields.productImage = imageUrl;
+    if (imageUrls && imageUrls.length > 0) {
+      updateFields.productImage = imageUrls;
     }
 
     const updatedProduct = await Product.findByIdAndUpdate(
@@ -85,13 +91,19 @@ exports.updateProduct = async (req, res) => {
     );
 
     if (!updatedProduct) {
-      return res.status(STATUS_NOT_FOUND).json({ message: MSG_PRODUCT_NOT_FOUND });
+      return res
+        .status(STATUS_NOT_FOUND)
+        .json({ message: MSG_PRODUCT_NOT_FOUND });
     }
 
-    res.status(STATUS_SUCCESS).json({ message: MSG_PRODUCT_UPDATED, updatedProduct });
+    res
+      .status(STATUS_SUCCESS)
+      .json({ message: MSG_PRODUCT_UPDATED, updatedProduct });
   } catch (error) {
     console.error("Error updating product:", error);
-    res.status(STATUS_INTERNAL_SERVER_ERROR).json({ message: MSG_INTERNAL_SERVER_ERROR });
+    res
+      .status(STATUS_INTERNAL_SERVER_ERROR)
+      .json({ message: MSG_INTERNAL_SERVER_ERROR });
   }
 };
 
@@ -106,6 +118,8 @@ exports.deleteProduct = async (req, res) => {
     }
   } catch (error) {
     console.error("Delete product controller error:", error);
-    res.status(STATUS_INTERNAL_SERVER_ERROR).json({ message: MSG_INTERNAL_SERVER_ERROR });
+    res
+      .status(STATUS_INTERNAL_SERVER_ERROR)
+      .json({ message: MSG_INTERNAL_SERVER_ERROR });
   }
 };
