@@ -11,7 +11,7 @@ import css from "../css/Body.css";
 const Body = () => {
   return (
     <div className="body-container" style={{ marginBottom: '3%' }}> 
-      <Category />
+     <Category category="mobile" />
       <Carousel data-bs-theme="dark" >
         <Carousel.Item>
           <img className="d-block w-100" src={image1} alt="First slide" style={{ objectFit: 'cover' }} />
@@ -29,15 +29,15 @@ const Body = () => {
       <Container className="my-4">
         <Typography variant="h5">NIKE</Typography>
       </Container>
-      <ProductCategories />
+      <ProductCategories brandName={"NIKE"} />
       <Container className="my-4">
         <Typography variant="h5">APPLE</Typography>
       </Container>
-      <ProductCategories />
-      <Container className="my-4">
+      <ProductCategories brandName={"apple"} />      <Container className="my-4">
         <Typography variant="h5">Jack & Jones</Typography>
       </Container>
-      <ProductCategories />
+      <ProductCategories brandName={"Jack and Jones"} />
+
     </div>
   );
 };  

@@ -28,9 +28,32 @@ exports.getProducts = async (req, res) => {
   }
 };
 
-exports.fetchCategoryProduct = async(_req, res) => {
+
+exports.fetchProduct = async (req, res) => {
+  const { id } = req.params;
+  console.log("Fetching product with ID:", id); 
+  
   try {
-    const productCategory = await Product.distinct('category');
+    const product = await Product.findById(id);
+    if (product) {
+      res.status(200).json({
+        data: product,
+        message: 'Product fetched successfully'
+      });
+    } else {
+      res.status(404).json({ message: 'Product not found' });
+    }
+  } catch (error) {
+    console.error("Error fetching product:", error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+
+
+exports.fetchCategoryProduct = async (req, res) => {
+  try {
+    const productCategory = await Product.distinct("category");
 
     const productByCategory = [];
     for (const category of productCategory) {
@@ -39,44 +62,75 @@ exports.fetchCategoryProduct = async(_req, res) => {
         productByCategory.push(product);
       }
     }
-    res.status(STATUS_SUCCESS).json({
-      message: MSG_CATEGORY_PRODUCTS_FETCHED,
+    res.status(200).json({
+      message: "Category products fetched successfully",
       data: productByCategory,
       success: true,
-      error: false
+      error: false,
     });
   } catch (err) {
-    res.status(STATUS_BAD_REQUEST).json({
-      message: err.message || err,
+    console.error("Error fetching category products:", err);
+    res.status(400).json({
+      message: err.message || "Failed to fetch category products",
       error: true,
-      success: false
+      success: false,
     });
   }
 };
 
-exports.fetchProductsByCategory = async(req, res) => {
+exports.fetchProductsBrand = async (req, res) => {
+  try {
+    const { brandName } = req.query;
+
+    let productsByBrand;
+
+    productsByBrand = await Product.find({ brandName: brandName });
+    console.log("eeeeee", productsByBrand);
+
+    console.log("Fetched products by brand:", productsByBrand);
+    res.status(200).json({
+      message: "Brand products fetched successfully",
+      data: productsByBrand,
+      success: true,
+      error: false,
+    });
+  } catch (err) {
+    console.error("Error fetching brand products:", err);
+    res.status(400).json({
+      message: err.message || "Failed to fetch brand products",
+      error: true,
+      success: false,
+    });
+  }
+};
+
+exports.fetchProductsByCategory = async (req, res) => {
   const { category } = req.query;
   try {
-    const response = await Product.find({ category });
-    if (response.length > 0) {
-      res.status(STATUS_SUCCESS).json({
-        message: MSG_CATEGORY_PRODUCTS_FETCHED,
-        data: response,
+    const products = await Product.find({ category });
+    if (products.length > 0) {
+      console.log(`Products found for category ${category}:`, products);
+      res.status(200).json({
+        message: `Products found for category ${category}`,
+        data: products,
         success: true,
-        error: false
+        error: false,
       });
     } else {
-      res.status(STATUS_NOT_FOUND).json({ message: MSG_CATEGORY_NOT_FOUND });
+      console.log(`No products found for category ${category}`);
+      res
+        .status(404)
+        .json({ message: `No products found for category ${category}` });
     }
-  } catch (e) {
-    res.status(STATUS_BAD_REQUEST).json({
-      message: e.message || e,
+  } catch (error) {
+    console.error("Error fetching products by category:", error);
+    res.status(500).json({
+      message: "Failed to fetch products. Please try again later.",
       error: true,
-      success: false
+      success: false,
     });
   }
 };
-
 
 exports.addProduct = async (req, res) => {
   try {

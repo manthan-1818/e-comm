@@ -1,9 +1,6 @@
+// ProductCategories.jsx
+
 import "../css/ProductCategories.css";
-import image1 from "../images/toy.jpg";
-import image2 from "../images/apple.jpg";
-import image0 from "../images/watch.jpg";
-import image3 from "../images/camera.jpg";
-import image4 from "../images/keyboard.jpg";
 import React, { useEffect, useState } from "react";
 import Slider from "react-slick";
 import LinearProgress from "@mui/material/LinearProgress";
@@ -11,73 +8,28 @@ import { Container, Box, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { fetchProductBrand } from "../utils/services/productservices";
 
-const ProductCategories = ({ category }) => {
-  const mockProducts = [
-    {
-      _id: "1",
-      productName: "Best of Action Toys",
-      price: "Up to 70% Off",
-      productImage: image1,
-    },
-    {
-      _id: "2",
-      productName: "Electric Cycle",
-      price: "Up to 40% Off",
-      productImage: image2,
-    },
-    {
-      _id: "3",
-      productName: "Top Stationery",
-      price: "From ₹49",
-      productImage: image0,
-    },
-    {
-      _id: "4",
-      productName: "Microphones",
-      price: "Up to 70% off",
-      productImage: image3,
-    },
-    {
-      _id: "5",
-      productName: "Geared Cycles",
-      price: "Up to 70% Off",
-      productImage: image4,
-    },
-    {
-      _id: "6",
-      productName: "Soft Toys",
-      price: "Upto 70% Off",
-      productImage: image4,
-    },
-    {
-      _id: "2",
-      productName: "Electric Cycle",
-      price: "Up to 40% Off",
-      productImage: image2,
-    },
-    {
-      _id: "2",
-      productName: "Electric Cycle",
-      price: "Up to 40% Off",
-      productImage: image2,
-    },
-  ];
-
+const ProductCategories = ({ brandName }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const fetchProductsFromCategory = async () => {
+  const  fetchProductBrands= async () => {
     setLoading(true);
-    setTimeout(() => {
-      setProducts(mockProducts);
+    try {
+      const response = await fetchProductBrand(brandName);
+      console.log("Fetched products:", response.data);
+      setProducts(response.data);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   useEffect(() => {
-    fetchProductsFromCategory();
-  }, [category]);
+    fetchProductBrands();
+  }, [brandName]);
 
   const settings = {
     dots: false,
@@ -90,7 +42,7 @@ const ProductCategories = ({ category }) => {
   };
 
   function SampleNextArrow(props) {
-    const { className, style, onClick } = props;
+    const { className, onClick } = props;
     return (
       <div className={`${className} custom-arrow next-arrow`} onClick={onClick}>
         <div className="arrow-icon"></div>
@@ -99,7 +51,7 @@ const ProductCategories = ({ category }) => {
   }
 
   function SamplePrevArrow(props) {
-    const { className, style, onClick } = props;
+    const { className, onClick } = props;
     return (
       <div className={`${className} custom-arrow prev-arrow`} onClick={onClick}>
         <div className="arrow-icon"></div>
@@ -125,7 +77,7 @@ const ProductCategories = ({ category }) => {
               >
                 <Box className="product-card" marginRight={2} marginBottom={2}>
                   <Box className="product-image-container">
-                    <img src={product.productImage} alt={product.productName} />
+                    <img src={product.productImage[0]} alt={product.productName} />
                   </Box>
                   <Box className="product-info">
                     <Box
@@ -147,7 +99,7 @@ const ProductCategories = ({ category }) => {
                         color="textSecondary"
                         className="price"
                       >
-                        {product.price}
+                       ₹ {product.price}
                       </Typography>
                     </Box>
                   </Box>

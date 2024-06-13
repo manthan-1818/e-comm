@@ -2,10 +2,15 @@
 
 import axiosInstance from "../services/axios";
 
+export const fetchProduct = async (id) => {
+  console.log("jjjjjjjjjjjj",id);
+  const response = await axiosInstance.get(`/product/fetch-product/${id}`);
+  return response.data;
+};
+
 export const getProducts = async () => {
   try {
     const response = await axiosInstance.get("/product/get-products");
-    console.log("producr", response.data[0].productImage);
     return response.data;
   } catch (error) {
     console.error("Error fetching products:", error);
@@ -13,18 +18,30 @@ export const getProducts = async () => {
   }
 };
 
-export const fetchProductsByCategory = async (category) => {
-  const response = await axiosInstance.get(
-    `/product/fetch-product-by-category?category=${category}`
-  );
-  return response.data;
-};
-
 export const fetchCategoryProducts = async () => {
   const response = await axiosInstance.get(`/product/fetch-category-product`);
   return response.data;
 };
 
+export const fetchProductBrand = async (brandName) => {
+  const response = await axiosInstance.get(`/product/fetch-brand-product?brandName=${brandName}`);
+  return response.data;
+};
+
+export const fetchProductsByCategory = async (category) => {
+  try {
+    const response = await axiosInstance.get(
+      `/product/fetch-product-by-category`,
+      {
+        params: { category },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching products by category:", error);
+    throw error;
+  }
+};
 export const addProduct = async (formData) => {
   try {
     const response = await axiosInstance.post(

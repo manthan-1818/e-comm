@@ -8,19 +8,27 @@ const userRoutes = require("./Routes/userroutes");
 const productRoutes = require('./Routes/productroutes');
 
 const cors = require("cors");
+
+// Connect to database
+database();
+
+// Middleware
 app.use(express.json());
 app.use(cors({ origin: ["http://localhost:3000", "http://localhost:3000/"] }));
 
-database();
-
+// Routes
 app.use("/submit", userRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-app.use("/product", productRoutes)
+app.use("/product", productRoutes);
 
-app.use("/", (req, res) => {
-  res.json("demo api");
+app.get("/", (req, res) => {
+  res.json("Welcome to the demo API");
+});
+
+app.use((req, res, next) => {
+  res.status(404).json({ message: "Resource not found" });
 });
 
 app.listen(port, () => {
-  console.log(`server is running on ${port}`);
+  console.log(`Server is running on ${port}`);
 });
