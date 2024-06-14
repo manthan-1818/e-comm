@@ -1,18 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
-import LocalOfferIcon from '@mui/icons-material/LocalOffer';
-import FlashOnIcon from '@mui/icons-material/FlashOn';
-import { fetchProduct } from '../utils/services/productservices';
+import LocalOfferIcon from "@mui/icons-material/LocalOffer";
+import FlashOnIcon from "@mui/icons-material/FlashOn";
+import { fetchProduct } from "../utils/services/productservices";
+import { addToCart } from "../redux/slice/cartSlice";
+import { useDispatch, useSelector } from "react-redux";
 import "../css/Productpage.css";
 
 const ProductPage = () => {
   const { id } = useParams();
+  const cartData = useSelector((state) => state.cart?.items || []);
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  const dispatch = useDispatch();
+
   const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState(false);
   const [product, setProduct] = useState(null);
-  const [val, setVal] = useState(0); // State to manage main image index
+  const [val, setVal] = useState(0);
   const [mainImage, setMainImage] = useState(null);
 
   useEffect(() => {
@@ -22,9 +28,12 @@ const ProductPage = () => {
         const response = await fetchProduct(_id);
         setProduct(response.data);
       } catch (error) {
-        enqueueSnackbar(`Failed to fetch the data. Please try again later. ${error.message}`, {
-          variant: 'error',
-        });
+        enqueueSnackbar(
+          `Failed to fetch the data. Please try again later. ${error.message}`,
+          {
+            variant: "error",
+          }
+        );
       } finally {
         setLoading(false);
       }
@@ -33,13 +42,30 @@ const ProductPage = () => {
     fetchedProduct(id);
   }, [id, enqueueSnackbar]);
 
-  const handleImage = (image, index) => {
-    setMainImage(image);
-    setVal(index); // Update val state to current image index
+  const handleCart = () => {
+    if (!product) return; 
+    dispatch(addToCart(product));
+    console.log("Added to cart:", product);
+    setToast(true);
+    navigate("/cart/");
   };
+  
 
   const handleBuyNow = (_id) => {
-    navigate(`/Productpage/${_id}`);
+    if (!product) return; 
+    const isProductInCart = cartData.find((item) => item._id === _id);
+
+    if (isProductInCart) {
+      navigate("/cart/");
+    } else {
+      dispatch(addToCart(product));
+      navigate("/cart/");
+    }
+  };
+
+  const handleImage = (image, index) => {
+    setMainImage(image);
+    setVal(index);
   };
 
   if (loading) {
@@ -71,8 +97,12 @@ const ProductPage = () => {
           <img src={mainImage || productImage[val]} alt="Main Product" />
         </div>
         <div className="buttons">
-          <button className="add-to-cart" disabled>Add to Cart</button>
-          <button className="buy-now" onClick={() => handleBuyNow(product._id)}><FlashOnIcon /> BUY NOW</button>
+          <button className="add-to-cart" onClick={handleCart}>
+            Add to Cart
+          </button>
+          <button className="buy-now" onClick={() => handleBuyNow(product._id)}>
+            <FlashOnIcon /> BUY NOW
+          </button>
         </div>
       </div>
       <div className="product-details">

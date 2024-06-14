@@ -3,7 +3,6 @@
 import axiosInstance from "../services/axios";
 
 export const fetchProduct = async (id) => {
-  console.log("jjjjjjjjjjjj",id);
   const response = await axiosInstance.get(`/product/fetch-product/${id}`);
   return response.data;
 };

@@ -18,10 +18,12 @@ const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [brandFilter, setBrandFilter] = useState("");
-  const [priceFilter, setPriceFilter] = useState("");
+  const [brands, setBrands] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const categoryFilter = queryParams.get("category");
+
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
@@ -31,18 +33,23 @@ const ProductList = () => {
           url = `/product/fetch-product-by-category?category=${categoryFilter}`;
         }
         const response = await axiosInstance.get(url);
-        let filteredProducts = response.data.data;
-        if (brandFilter) {
-          filteredProducts = filteredProducts.filter(
-            (product) => product.brand === brandFilter
-          );
+        console.log("API Response:", response.data);
+
+        const { data, success, message } = response.data;
+
+        if (success) {
+          const fetchedProducts = data || [];
+          setProducts(fetchedProducts);
+
+          const uniqueBrands = [
+            ...new Set(fetchedProducts.map((product) => product.brandName)),
+          ];
+          setBrands(uniqueBrands);
+
+          setFilteredProducts(fetchedProducts);
+        } else {
+          console.error("Error fetching products:", message);
         }
-        if (priceFilter) {
-          filteredProducts = filteredProducts.filter(
-            (product) => parseInt(product.price) < parseInt(priceFilter)
-          );
-        }
-        setProducts(filteredProducts);
       } catch (error) {
         console.error("Error fetching products:", error);
       } finally {
@@ -51,7 +58,18 @@ const ProductList = () => {
     };
 
     fetchProducts();
-  }, [categoryFilter, brandFilter, priceFilter]);
+  }, [categoryFilter]);
+  
+    useEffect(() => {
+    if (brandFilter === "") {
+      setFilteredProducts(products);
+    } else {
+      const filtered = products.filter(
+        (product) => product.brandName === brandFilter
+      );
+      setFilteredProducts(filtered);
+    }
+  }, [brandFilter, products]);
 
   return (
     <Container>
@@ -76,11 +94,11 @@ const ProductList = () => {
             >
               <Typography variant="h5">Loading...</Typography>
             </Box>
-          ) : products.length === 0 ? (
+          ) : filteredProducts.length === 0 ? (
             <Typography variant="body1">No products found.</Typography>
           ) : (
             <Grid container spacing={3} justifyContent="flex-start">
-              {products.map((product) => (
+              {filteredProducts.map((product) => (
                 <Grid item key={product._id} xs={12} sm={6} md={4} lg={3}>
                   <Card className="card">
                     <CardMedia
@@ -89,7 +107,7 @@ const ProductList = () => {
                       image={product.productImage[0]}
                       alt={product.productName}
                     />
-                    <CardContent>
+                    <CardContent className="card-content">
                       <Typography variant="h6" component="div" gutterBottom>
                         {product.productName}
                       </Typography>
@@ -97,14 +115,11 @@ const ProductList = () => {
                         variant="body2"
                         color="text.secondary"
                         paragraph
+                        className="card-description"
                       >
                         {product.description}
                       </Typography>
-                      <Box
-                        display="flex"
-                        justifyContent="space-between"
-                        alignItems="center"
-                      >
+                      <Box className="card-footer">
                         <Typography variant="body1" color="text.primary">
                           ${product.price}
                         </Typography>
@@ -133,23 +148,14 @@ const ProductList = () => {
                 variant="outlined"
                 fullWidth
               >
-                <MenuItem value="">All Brands</MenuItem>
-                <MenuItem value="Brand A">Brand A</MenuItem>
-                <MenuItem value="Brand B">Brand B</MenuItem>
-              </TextField>
-
-              <TextField
-                select
-                label="Filter by Price"
-                value={priceFilter}
-                onChange={(e) => setPriceFilter(e.target.value)}
-                variant="outlined"
-                fullWidth
-                style={{ marginTop: "10px" }}
-              >
-                <MenuItem value="">All Prices</MenuItem>
-                <MenuItem value="100">Less than $100</MenuItem>
-                <MenuItem value="200">Less than $200</MenuItem>
+                <MenuItem key="" value="">
+                  All Brands
+                </MenuItem>
+                {brands.map((brand) => (
+                  <MenuItem key={brand} value={brand}>
+                    {brand}
+                  </MenuItem>
+                ))}
               </TextField>
             </Box>
           </Box>

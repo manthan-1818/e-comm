@@ -1,8 +1,5 @@
-/* eslint-disable no-plusplus */
-/* eslint-disable no-param-reassign */
-/* eslint-disable camelcase */
 import { createSlice } from '@reduxjs/toolkit';
-import { get_cart, set_cart, remove_cart } from '../../constant/localStorage.constant';
+import { get_cart, set_cart, remove_cart } from '../../constant/strorageconstant';
 
 const initialState = {
   items: get_cart(),
