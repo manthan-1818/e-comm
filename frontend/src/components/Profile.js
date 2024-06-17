@@ -12,6 +12,7 @@ import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import { styled } from "@mui/system";
+import Navbar from '../components/Navbar';
 
 const Profile = () => {
 
@@ -69,6 +70,8 @@ const Profile = () => {
   };
 
   return (
+    <>
+    <Navbar/>
     <Container maxWidth="md" sx={{ mt: 4 }}>
         
       <Card>
@@ -179,6 +182,7 @@ const Profile = () => {
         </Box>
       </Card>
     </Container>
+    </>
   );
 };
 

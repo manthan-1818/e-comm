@@ -10,6 +10,8 @@ import ProductPage from "./pages/Productpage";
 import ProductList from "./pages/Productlist"; 
 import AdminPanel from "./pages/Adminpannel";
 import Profile from "./components/Profile";
+import Checkout from "./pages/Checkout";
+import Payment from "./pages/Payment";
 
 const App = () => {
   return (
@@ -25,6 +27,8 @@ const App = () => {
           <Route path="/productlist" element={<ProductList />} /> 
           <Route path="/admin-panel" element={<AdminPanel />} /> 
           <Route path="/profile" element={<Profile />} /> 
+          <Route path="/checkout" element={<Checkout />} /> 
+          <Route path="/payment" element={<Payment />} /> 
         </Routes>
       </div>
     </Router>
