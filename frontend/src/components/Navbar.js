@@ -9,8 +9,10 @@ import Person2Icon from '@mui/icons-material/Person2';
 import LocalMallIcon from '@mui/icons-material/LocalMall';
 import SearchIcon from '@mui/icons-material/Search';
 import InputBase from '@mui/material/InputBase';
+import Modal from '@mui/material/Modal';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import '../css/Navbar.css';
-import { Typography } from '@mui/material';
 import { logout } from '../redux/slice/authSlice'; 
 import image from "../images/logo.png";
 
@@ -20,6 +22,21 @@ const IconTextWrapper = styled('div')({
   alignItems: 'center',
 });
 
+const modalStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  boxShadow: 24,
+  p: 4,
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: 2,
+};
+
 const Navbar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -28,6 +45,7 @@ const Navbar = () => {
   const location = useLocation();
   const [searchTerm, setSearchTerm] = useState('');
   const [anchorEl, setAnchorEl] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
   const open = Boolean(anchorEl);
 
   const handleClick = (event) => {
@@ -64,6 +82,18 @@ const Navbar = () => {
     dispatch(logout());
     navigate('/');
     handleClose();
+  };
+
+  const handleCartClick = () => {
+    if (!isAuthenticated) {
+      setOpenModal(true);
+    } else {
+      navigate('/cart');
+    }
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
   };
 
   const isLoginPage = location.pathname === '/login';
@@ -162,24 +192,48 @@ const Navbar = () => {
             </li>
           )}
           <li>
-            <Link to="/cart" className="cart-link">
-              <Button id="cart-button">
-                <IconTextWrapper>
-                  <LocalMallIcon sx={{ color: 'black' }} />
-                  <Typography
-                    variant="body1"
-                    sx={{
-                      fontSize: '0.7rem',
-                      fontWeight: 'bold',
-                      textTransform: 'none',
-                      color: 'black',
-                    }}
-                  >
-                    Cart
-                  </Typography>
-                </IconTextWrapper>
-              </Button>
-            </Link>
+            <Button id="cart-button" onClick={handleCartClick}>
+              <IconTextWrapper>
+                <LocalMallIcon sx={{ color: 'black' }} />
+                <Typography
+                  variant="body1"
+                  sx={{
+                    fontSize: '0.7rem',
+                    fontWeight: 'bold',
+                    textTransform: 'none',
+                    color: 'black',
+                  }}
+                >
+                  Cart
+                </Typography>
+              </IconTextWrapper>
+            </Button>
+            <Modal
+              open={openModal}
+              onClose={handleCloseModal}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <Box sx={modalStyle}>
+                <Typography id="modal-modal-title" variant="h6" component="h2">
+                  Missing Cart items?
+                </Typography>
+                <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                  Login to see the items you added previously.
+                </Typography>
+                <Button 
+                  onClick={handleLoginClick} 
+                  variant="contained" 
+                  sx={{ 
+                    backgroundColor: '#d63384', 
+                    color: 'white', 
+                    '&:hover': { backgroundColor: '#d63384' } 
+                  }}
+                >
+                  Login
+                </Button>
+              </Box>
+            </Modal>
           </li>
         </ul>
       </div>
