@@ -99,7 +99,7 @@ const ProductCategories = ({ brandName }) => {
                         color="textSecondary"
                         className="price"
                       >
-                       ₹ {product.price}
+                       $ {product.price}
                       </Typography>
                     </Box>
                   </Box>

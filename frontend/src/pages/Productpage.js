@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
-import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import FlashOnIcon from "@mui/icons-material/FlashOn";
 import { fetchProduct } from "../utils/services/productservices";
 import { addToCart } from "../redux/slice/cartSlice";

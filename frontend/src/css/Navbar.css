@@ -7,6 +7,23 @@
   padding: 1rem;
 }
 
+.customBadge .MuiBadge-badge {
+  background-color: #d63384; 
+  color: white; 
+  font-size: 12px; 
+  padding: 2px 5px; 
+  border-radius: 50%; 
+}
+
+button:focus:not(:focus-visible) {
+  outline: none;
+}
+
+button:focus-visible {
+  outline: 2px solid #d63384; 
+  outline-offset: 2px; 
+}
+
 .navbar-brand a {
   color: #000;
   text-decoration: none;

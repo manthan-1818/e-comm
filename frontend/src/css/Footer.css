@@ -3,7 +3,8 @@
   box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); 
   position: relative;
   padding-top: 20px !important;
-
+  padding-bottom: 0 !important; 
+  margin-bottom: 0 !important;
 }
 
 .footer-content {
@@ -84,7 +85,7 @@
 
 .footer .copyright {
   position: absolute;
-  bottom: -4px;
+  bottom: -10px;
   left: 50%;
   transform: translateX(-50%);
 }

@@ -12,8 +12,10 @@ import InputBase from '@mui/material/InputBase';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import Badge from '@mui/material/Badge';
+import IconButton from '@mui/material/IconButton';
 import '../css/Navbar.css';
-import { logout } from '../redux/slice/authSlice'; 
+import { logout } from '../redux/slice/authSlice';
 import image from "../images/logo.png";
 
 const IconTextWrapper = styled('div')({
@@ -43,6 +45,7 @@ const Navbar = () => {
   const user = useSelector((state) => state?.auth.user);
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const location = useLocation();
+  const cartItems = useSelector((state) => state.cart.items);
   const [searchTerm, setSearchTerm] = useState('');
   const [anchorEl, setAnchorEl] = useState(null);
   const [openModal, setOpenModal] = useState(false);
@@ -98,6 +101,8 @@ const Navbar = () => {
 
   const isLoginPage = location.pathname === '/login';
   const isAdminPanelPage = location.pathname === '/admin-panel';
+
+  const itemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
   return (
     <nav className="navbar">
@@ -171,7 +176,7 @@ const Navbar = () => {
                 </>
               ) : (
                 <Link to="/login" className="login-link">
-                  <Button id="login-button">
+                  <Button id="login-button" className="customButton">
                     <IconTextWrapper>
                       <Person2Icon sx={{ color: 'black' }} />
                       <Typography
@@ -192,22 +197,41 @@ const Navbar = () => {
             </li>
           )}
           <li>
-            <Button id="cart-button" onClick={handleCartClick}>
-              <IconTextWrapper>
-                <LocalMallIcon sx={{ color: 'black' }} />
-                <Typography
-                  variant="body1"
-                  sx={{
-                    fontSize: '0.7rem',
-                    fontWeight: 'bold',
-                    textTransform: 'none',
-                    color: 'black',
-                  }}
-                >
-                  Cart
-                </Typography>
-              </IconTextWrapper>
-            </Button>
+            <IconButton color="inherit" onClick={handleCartClick} className="customButton">
+              {isAuthenticated ? (
+                 <Badge badgeContent={itemCount} className="customBadge">
+                  <IconTextWrapper>
+                    <LocalMallIcon sx={{ color: 'black' }} />
+                    <Typography
+                      variant="body1"
+                      sx={{
+                        fontSize: '0.7rem',
+                        fontWeight: 'bold',
+                        textTransform: 'none',
+                        color: 'black',
+                      }}
+                    >
+                      Cart
+                    </Typography>
+                  </IconTextWrapper>
+                </Badge>
+              ) : (
+                <IconTextWrapper>
+                  <LocalMallIcon sx={{ color: 'black' }} />
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      fontSize: '0.7rem',
+                      fontWeight: 'bold',
+                      textTransform: 'none',
+                      color: 'black',
+                    }}
+                  >
+                    Cart
+                  </Typography>
+                </IconTextWrapper>
+              )}
+            </IconButton>
             <Modal
               open={openModal}
               onClose={handleCloseModal}
@@ -224,6 +248,7 @@ const Navbar = () => {
                 <Button 
                   onClick={handleLoginClick} 
                   variant="contained" 
+                  
                   sx={{ 
                     backgroundColor: '#d63384', 
                     color: 'white', 

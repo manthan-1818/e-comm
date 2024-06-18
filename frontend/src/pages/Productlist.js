@@ -10,7 +10,7 @@ import {
   TextField,
   MenuItem,
 } from "@mui/material";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/services/axios";
 import "../css/Productlist.css";
 
@@ -21,6 +21,7 @@ const ProductList = () => {
   const [brands, setBrands] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const location = useLocation();
+  const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
   const categoryFilter = queryParams.get("category");
 
@@ -60,7 +61,7 @@ const ProductList = () => {
     fetchProducts();
   }, [categoryFilter]);
   
-    useEffect(() => {
+  useEffect(() => {
     if (brandFilter === "") {
       setFilteredProducts(products);
     } else {
@@ -70,6 +71,10 @@ const ProductList = () => {
       setFilteredProducts(filtered);
     }
   }, [brandFilter, products]);
+
+  const handleCardClick = (productId) => {
+    navigate(`/Productpage/${productId}`);
+  };
 
   return (
     <Container>
@@ -100,7 +105,11 @@ const ProductList = () => {
             <Grid container spacing={3} justifyContent="flex-start">
               {filteredProducts.map((product) => (
                 <Grid item key={product._id} xs={12} sm={6} md={4} lg={3}>
-                  <Card className="card">
+                  <Card
+                    className="card"
+                    onClick={() => handleCardClick(product._id)}
+                    style={{ cursor: "pointer" }}
+                  >
                     <CardMedia
                       component="img"
                       height="140"
