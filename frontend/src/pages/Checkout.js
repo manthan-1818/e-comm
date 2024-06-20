@@ -1,23 +1,37 @@
-import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Container, Typography, TextField, Button, Box, Grid, Divider } from '@mui/material';
-import Navbar from '../components/Navbar';
-import { useNavigate } from 'react-router-dom';
-import { placeOrder } from '../redux/slice/orderSlice';
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  Container,
+  Typography,
+  TextField,
+  Button,
+  Box,
+  Grid,
+  Divider,
+} from "@mui/material";
+import Navbar from "../components/Navbar";
+import { useNavigate } from "react-router-dom";
+import { placeOrder } from "../redux/slice/orderSlice";
+import { clearCart } from "../redux/slice/cartSlice";
 
 const Checkout = () => {
-  const cartItems = useSelector(state => state.cart.items);
-  const totalAmount = useSelector(state => state.cart.items.reduce((total, item) => total + item.price * item.quantity, 0));
+  const cartItems = useSelector((state) => state.cart.items);
+  const totalAmount = useSelector((state) =>
+    state.cart.items.reduce(
+      (total, item) => total + item.price * item.quantity,
+      0
+    )
+  );
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const [shippingInfo, setShippingInfo] = useState({
-    fullName: '',
-    address: '',
-    city: '',
-    state: '',
-    postalCode: '',
-    country: '',
+    fullName: "",
+    address: "",
+    city: "",
+    state: "",
+    postalCode: "",
+    country: "",
   });
 
   const handleInputChange = (e) => {
@@ -27,15 +41,16 @@ const Checkout = () => {
 
   const handleProceedToPayment = () => {
     const orderDetails = {
-      ...shippingInfo,
-      items: cartItems,
-      totalAmount,
+      shippingInfo: shippingInfo,
+      cartItems: cartItems.map((item) => ({
+        productId: item._id,
+        quantity: item.quantity,
+        price: item.price,
+      })),
+      totalAmount: totalAmount,
     };
-    console.log('Order Details:', orderDetails);
-
-
     dispatch(placeOrder(orderDetails));
-    navigate('/payment');
+    navigate("/payment");
   };
 
   return (
@@ -106,14 +121,25 @@ const Checkout = () => {
             </Typography>
             <Box sx={{ mb: 2 }}>
               {cartItems.map((item) => (
-                <Box key={item._id} sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                  <Typography>{item.productName} (x{item.quantity})</Typography>
-                  <Typography>${(item.price * item.quantity).toFixed(2)}</Typography>
+                <Box
+                  key={item._id}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    mb: 1,
+                  }}
+                >
+                  <Typography>
+                    {item.productName} (x{item.quantity})
+                  </Typography>
+                  <Typography>
+                    ${(item.price * item.quantity).toFixed(2)}
+                  </Typography>
                 </Box>
               ))}
             </Box>
             <Divider sx={{ mb: 2 }} />
-            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
               <Typography variant="h6">Total:</Typography>
               <Typography variant="h6">${totalAmount.toFixed(2)}</Typography>
             </Box>
@@ -123,9 +149,9 @@ const Checkout = () => {
           variant="contained"
           sx={{
             mt: 3,
-            backgroundColor: '#d63384',
-            '&:hover': {
-              backgroundColor: '#c62874',
+            backgroundColor: "#d63384",
+            "&:hover": {
+              backgroundColor: "#c62874",
             },
           }}
           onClick={handleProceedToPayment}

@@ -5,11 +5,29 @@ import FlashOnIcon from "@mui/icons-material/FlashOn";
 import { fetchProduct } from "../utils/services/productservices";
 import { addToCart } from "../redux/slice/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
+import Modal from '@mui/material/Modal';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid';
 import "../css/Productpage.css";
+
+const modalStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  borderRadius: '8px',
+  boxShadow: 24,
+  p: 4,
+};
 
 const ProductPage = () => {
   const { id } = useParams();
   const cartData = useSelector((state) => state.cart?.items || []);
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated); // Access the auth slice's isAuthenticated
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch();
@@ -19,6 +37,7 @@ const ProductPage = () => {
   const [product, setProduct] = useState(null);
   const [val, setVal] = useState(0);
   const [mainImage, setMainImage] = useState(null);
+  const [openModal, setOpenModal] = useState(false); // State for modal
 
   useEffect(() => {
     const fetchedProduct = async (_id) => {
@@ -42,16 +61,25 @@ const ProductPage = () => {
   }, [id, enqueueSnackbar]);
 
   const handleCart = () => {
-    if (!product) return; 
+    if (!isAuthenticated) { // Check if user is authenticated
+      setOpenModal(true);
+      return;
+    }
+
+    if (!product) return;
     dispatch(addToCart(product));
     console.log("Added to cart:", product);
     setToast(true);
     navigate("/cart/");
   };
-  
 
   const handleBuyNow = (_id) => {
-    if (!product) return; 
+    if (!isAuthenticated) { // Check if user is authenticated
+      setOpenModal(true);
+      return;
+    }
+
+    if (!product) return;
     const isProductInCart = cartData.find((item) => item._id === _id);
 
     if (isProductInCart) {
@@ -65,6 +93,14 @@ const ProductPage = () => {
   const handleImage = (image, index) => {
     setMainImage(image);
     setVal(index);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  };
+
+  const handleLoginClick = () => {
+    navigate("/login"); // Redirect to login page
   };
 
   if (loading) {
@@ -124,6 +160,42 @@ const ProductPage = () => {
           <p>{description}</p>
         </div>
       </div>
+
+      <Modal
+        open={openModal}
+        onClose={handleCloseModal}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={modalStyle}>
+          <Typography 
+            id="modal-modal-title" 
+            variant="h6" 
+            component="h2" 
+            sx={{ mb: 2, textAlign: 'center', fontWeight: 'bold' }}
+          >
+            Missing Cart items?
+          </Typography>
+          <Typography 
+            id="modal-modal-description" 
+            sx={{ mt: 2, textAlign: 'center' }}
+          >
+ Please log in to add items to your cart.          </Typography>
+          <Grid container justifyContent="center" sx={{ mt: 4 }}>
+            <Button 
+              onClick={handleLoginClick} 
+              variant="contained" 
+              sx={{ 
+                backgroundColor: '#d63384', 
+                color: 'white', 
+                '&:hover': { backgroundColor: '#d63384' } 
+              }}
+            >
+              Login
+            </Button>
+          </Grid>
+        </Box>
+      </Modal>
     </div>
   );
 };

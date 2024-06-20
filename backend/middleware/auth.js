@@ -1,21 +1,3 @@
-// const tokenService = require("");
-
-// const authenticateToken = (req, res, next) => {
-//   const authHeader = req.headers['authorization'];
-//   const token = authHeader && authHeader.split(' ')[1];
-
-//   if (token == null) return res.sendStatus(401);
-
-//   const verified = tokenService.verifyToken(token);
-//   if (!verified) return res.sendStatus(403);
-
-//   req.userId = verified.userId;
-//   next();
-// };
-
-// module.exports = authenticateToken;
-
-
 const jwt = require('jsonwebtoken');
 const jwtKey = process.env.JWT_SECRET;
 const {
@@ -24,11 +6,11 @@ const {
   MSG_ACCESS_TOKEN_MISSING,
   MSG_TOKEN_EXPIRED,
   MSG_INVALID_ACCESS_TOKEN
-} = require('../constant/errorMessage.constant');
+} = require('../constant/constantError');
 
 const authentication = async (req, res, next) => {
   try {
-    const accessToken = req.headers.authorization?.split(' ')[1];
+    const accessToken = req.headers.authorization?.split(' ')[1]; 
 
     if (!accessToken) {
       return res

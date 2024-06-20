@@ -11,7 +11,7 @@ const Category = ({ category }) => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
-
+  console.log(categoryProduct);
   const fetchProductsFromCategory = async () => {
     if (!category) {
       console.error("Category is undefined or empty in frontend");

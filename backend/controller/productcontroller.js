@@ -144,7 +144,7 @@ exports.addProduct = async (req, res) => {
     const { productName, brandName, category, description, price } = req.body;
 
     const imageUrls = req.files.map((file) => {
-      return `http://localhost:5000/uploads/${file.originalname}`;
+      return `http://192.168.2.85:5000/uploads/${file.originalname}`;
     });
 
     const newProduct = new Product({
@@ -173,7 +173,7 @@ exports.updateProduct = async (req, res) => {
       req.body;
 
     const imageUrls = req.files.map((file) => {
-      return `http://localhost:5000/uploads/${file.originalname}`;
+      return `http://192.168.2.85:5000/uploads/${file.originalname}`;
     });
 
     const updateFields = {
@@ -227,3 +227,32 @@ exports.deleteProduct = async (req, res) => {
       .json({ message: MSG_INTERNAL_SERVER_ERROR });
   }
 };
+
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
+exports.payment = async (req, res) => {
+  const { amount } = req.body;
+
+  if (!amount || isNaN(amount)) {
+    return res.status(400).json({ error: { message: 'Invalid amount' } });
+  }
+
+  try {
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount,
+      currency: 'usd'
+    });
+
+    res.status(200).json({
+      clientSecret: paymentIntent.client_secret
+    });
+  } catch (error) {
+    console.error('Error creating payment intent:', error);
+    res.status(400).send({
+      error: {
+        message: error.message
+      }
+    });
+  }
+};
+

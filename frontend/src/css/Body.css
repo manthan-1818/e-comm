@@ -1,17 +1,30 @@
+.carousel-image {
+  width: 100%;
+  height: 250px; 
+  object-fit: cover; 
+}
+
+.carousel-inner {
+  transition: transform 0.5s ease-in-out;
+}
+
+.carousel-item {
+  transition: transform 0.5s ease-in-out;
+}
+
 .carousel-control-prev,
 .carousel-control-next {
   color: transparent !important;
   text-shadow: none !important;
   background: none !important;
   border: none !important;
-  font-size: 0; 
-  line-height: 0; 
-  
+  font-size: 0;
+  line-height: 0;
 }
 
 .carousel-control-prev::before,
 .carousel-control-next::before {
-  content: none !important; 
+  content: none !important;
 }
 
 .carousel-control-prev {
@@ -21,3 +34,5 @@
 .carousel-control-next {
   right: 0px;
 }
+
+

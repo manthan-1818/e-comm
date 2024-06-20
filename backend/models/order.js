@@ -13,7 +13,7 @@ const orderSchema = new mongoose.Schema(
       required: true
     },
     city: {
-      type: String,
+      type: String, 
       required: true
     },
     state: {
@@ -30,7 +30,7 @@ const orderSchema = new mongoose.Schema(
     },
     items: [
       {
-        productName: {
+        productId: {
           type: String,
           required: true
         },

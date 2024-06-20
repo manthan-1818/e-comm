@@ -8,18 +8,20 @@ const userRoutes = require("./Routes/userroutes");
 const productRoutes = require('./Routes/productroutes');
 
 const cors = require("cors");
+const orderRouter = require("./Routes/orderroutes");
 
 // Connect to database
 database();
 
 // Middleware
 app.use(express.json());
-app.use(cors({ origin: ["http://localhost:3000", "http://localhost:3000/"] }));
+app.use(cors({ origin: ["http://192.168.2.85:3000", "http://192.168.2.85:3000/", "http://localhost:3000/","http://localhost:3000"] }));
 
 // Routes
 app.use("/submit", userRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use("/product", productRoutes);
+app.use("/order",orderRouter)
 
 app.get("/", (req, res) => {
   res.json("Welcome to the demo API");

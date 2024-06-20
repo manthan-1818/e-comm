@@ -8,7 +8,7 @@ const {
   fetchCategoryProduct, 
   fetchProductsByCategory,
   fetchProductsBrand,
-  fetchProduct,
+  fetchProduct,payment
 } = require("../controller/productcontroller.js");
 const uploadProductImages = require("../config/multerconfig.js");
 
@@ -23,6 +23,8 @@ productRouter.get('/fetch-brand-product', fetchProductsBrand);
 productRouter.get('/fetch-product-by-category', fetchProductsByCategory);
 
 productRouter.post("/add-product", uploadProductImages, addProduct); 
+
+productRouter.post('/create-payment-intent', payment);
 
 productRouter.patch("/update-product", uploadProductImages, updateProduct); 
 
