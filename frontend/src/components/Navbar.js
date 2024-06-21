@@ -117,7 +117,7 @@ const Navbar = () => {
         <div className="spacer"></div>
         <div className="search-bar">
           <div>
-            <SearchIcon />
+            <SearchIcon   />
           </div>
           <InputBase
             placeholder="Search products, brands, and more..."

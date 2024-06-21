@@ -44,11 +44,14 @@ const Checkout = () => {
       shippingInfo: shippingInfo,
       cartItems: cartItems.map((item) => ({
         productId: item._id,
+        productName: item.productName,
+        productImage: item.productImage,
         quantity: item.quantity,
         price: item.price,
       })),
       totalAmount: totalAmount,
     };
+    console.log("Order Details:", orderDetails);
     dispatch(placeOrder(orderDetails));
     navigate("/payment");
   };

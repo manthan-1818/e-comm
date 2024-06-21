@@ -18,13 +18,16 @@ import {
   CardContent,
   CardActions,
   Divider,
+  Grid,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import { fetchOrders } from "../utils/services/orderservices";
-import Navbar from "../components/Navbar"; 
+import Navbar from "../components/Navbar";
+
 const Order = () => {
   const [orders, setOrders] = useState([]);
+  const [filteredOrders, setFilteredOrders] = useState([]); // State for filtered orders
   const [expandedOrderId, setExpandedOrderId] = useState(null);
   const { enqueueSnackbar } = useSnackbar();
   const [filter, setFilter] = useState("past 3 months");
@@ -33,9 +36,10 @@ const Order = () => {
   useEffect(() => {
     const fetchOrder = async () => {
       try {
-        const orders = await fetchOrders();
-        setOrders(orders.orders); // Ensure we access the orders array correctly
-        console.log("Fetched orders:", orders);
+        const fetchedOrders = await fetchOrders();
+        setOrders(fetchedOrders.orders); // Ensure we access the orders array correctly
+        setFilteredOrders(fetchedOrders.orders); // Initially set filtered orders to all orders
+        console.log("Fetched orders:", fetchedOrders);
       } catch (error) {
         enqueueSnackbar(
           `Failed to fetch the data. Please try again later. ${error.message}`,
@@ -49,13 +53,29 @@ const Order = () => {
     fetchOrder();
   }, []);
 
+  useEffect(() => {
+    // Filter orders based on searchTerm when it changes
+    const filtered = orders.filter((order) =>
+      order.items.some((item) =>
+        item.productName.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    );
+    setFilteredOrders(filtered);
+  }, [searchTerm, orders]);
+
   const handleToggleExpand = (orderId) => {
     setExpandedOrderId(expandedOrderId === orderId ? null : orderId);
   };
 
+  const handleSearch = () => {
+    // Perform search action here if needed
+    console.log("Searching for:", searchTerm);
+    // You can add further logic here if needed for search functionality
+  };
+
   return (
     <Container>
-      <Navbar /> {/* Include the Navbar component here */}
+      <Navbar />
       <Typography variant="h4" gutterBottom>
         Your Orders
       </Typography>
@@ -80,7 +100,7 @@ const Order = () => {
         <TextField
           variant="outlined"
           size="small"
-          placeholder="Search all orders"
+          placeholder="Search product names"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           sx={{ flex: 1, mx: 2 }}
@@ -88,96 +108,103 @@ const Order = () => {
         <Button
           variant="contained"
           color="primary"
+          onClick={handleSearch}
           sx={{ bgcolor: "#d63384", "&:hover": { bgcolor: "#b82b6e" } }}
         >
           Search Orders
         </Button>
       </Box>
-      <List>
-        {orders.map((order) => (
-          <Card key={order._id} variant="outlined" sx={{ mb: 2 }}>
-            <CardContent>
-              <Box display="flex" justifyContent="space-between">
-                <Box>
-                  <Typography variant="subtitle2" color="textSecondary">
-                    ORDER PLACED
-                  </Typography>
-                  <Typography variant="body2">
-                    {new Date(order.createdAt).toLocaleDateString()}
-                  </Typography>
+      <Grid container spacing={2}>
+        {filteredOrders.map((order) => ( // Render filteredOrders instead of orders
+          <Grid item xs={12} key={order._id}>
+            <Card variant="outlined">
+              <CardContent>
+                <Box display="flex" justifyContent="space-between">
+                  <Box>
+                    <Typography variant="subtitle2" color="textSecondary">
+                      ORDER PLACED
+                    </Typography>
+                    <Typography variant="body2">
+                      {new Date(order.createdAt).toLocaleDateString()}
+                    </Typography>
+                  </Box>
+                  <Box>
+                    <Typography variant="subtitle2" color="textSecondary">
+                      SHIP TO
+                    </Typography>
+                    <Typography variant="body2">{order.address}</Typography>
+                  </Box>
+                  <Box>
+                    <Typography variant="subtitle2" color="textSecondary">
+                      ORDER #
+                    </Typography>
+                    <Typography variant="body2">{order._id}</Typography>
+                  </Box>
                 </Box>
-                <Box>
-                  <Typography variant="subtitle2" color="textSecondary">
-                    SHIP TO
-                  </Typography>
-                  <Typography variant="body2">{order.address}</Typography>
-                </Box>
-                <Box>
-                  <Typography variant="subtitle2" color="textSecondary">
-                    ORDER #
-                  </Typography>
-                  <Typography variant="body2">{order._id}</Typography>
-                </Box>
-              </Box>
-              <ListItem>
-                <ListItemText primary={`Total Amount: $${order.totalAmount}`} />
-                <IconButton
-                  edge="end"
-                  onClick={() => handleToggleExpand(order._id)}
-                >
-                  {expandedOrderId === order._id ? (
-                    <ExpandLessIcon />
-                  ) : (
-                    <ExpandMoreIcon />
-                  )}
-                </IconButton>
-              </ListItem>
-              {expandedOrderId === order._id && (
-                <Box mt={2}>
-                  <Typography variant="h6">Items</Typography>
+                <List>
                   {order.items.map((item) => (
-                    <Box
-                      key={item._id}
-                      mb={1}
-                      pl={2}
-                      display="flex"
-                      alignItems="center"
-                    >
-                      <img
-                        src={item.productImage}
-                        alt={item.productName}
-                        style={{
-                          width: "50px",
-                          height: "50px",
-                          marginRight: "16px",
-                        }}
-                      />
-                      <Box>
-                        <Typography>Quantity: {item.quantity}</Typography>
-                        <Typography>Price: ${item.price}</Typography>
-                      </Box>
-                      <Divider />
-                    </Box>
+                    <ListItem key={item._id}>
+                      <ListItemText primary={`Product Name: ${item.productName}`} />
+                      <ListItemText primary={`Total Amount: $${order.totalAmount}`} />
+                      <IconButton
+                        edge="end"
+                        onClick={() => handleToggleExpand(order._id)}
+                      >
+                        {expandedOrderId === order._id ? (
+                          <ExpandLessIcon />
+                        ) : (
+                          <ExpandMoreIcon />
+                        )}
+                      </IconButton>
+                    </ListItem>
                   ))}
-                </Box>
-              )}
-            </CardContent>
-            <CardActions>
-              <Button
-                size="small"
-                variant="contained"
-                color="primary"
-                sx={{ bgcolor: "#d63384", "&:hover": { bgcolor: "#b82b6e" } }}
-              >
-                Track package
-              </Button>
-              <Button size="small" variant="outlined">
-                Get help
-              </Button>
-            </CardActions>
-          </Card>
+                </List>
+                {expandedOrderId === order._id && (
+                  <Box mt={2}>
+                    {order.items.map((item) => (
+                      <Box
+                        key={item._id}
+                        mb={1}
+                        pl={2}
+                        display="flex"
+                        alignItems="center"
+                      >
+                        <img
+                          src={item.productImage[0]}
+                          alt={item.productName}
+                          style={{
+                            width: "50px",
+                            height: "50px",
+                            marginRight: "16px",
+                          }}
+                        />
+                        <Box>
+                          <Typography>Quantity: {item.quantity}</Typography>
+                          <Typography>Price: ${item.price}</Typography>
+                        </Box>
+                        <Divider orientation="vertical" flexItem />
+                      </Box>
+                    ))}
+                  </Box>
+                )}
+              </CardContent>
+              <CardActions>
+                <Button
+                  size="small"
+                  variant="contained"
+                  color="primary"
+                  sx={{ bgcolor: "#d63384", "&:hover": { bgcolor: "#b82b6e" } }}
+                >
+                  Track package
+                </Button>
+                <Button size="small" variant="outlined">
+                  Get help
+                </Button>
+              </CardActions>
+            </Card>
+          </Grid>
         ))}
-      </List>
+      </Grid>
     </Container>
   );
 };

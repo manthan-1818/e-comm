@@ -11,38 +11,43 @@ const {
 
 exports.createOrder = async (req, res) => {
   try {
+    const { shippingInfo, cartItems, totalAmount, items } = req.body;
     console.log("hhhhhhhhhhhhhh", req.body);
-    
-    // const { shippingInfo, cartItems, totalAmount } = req.body;
+    // Map cartItems to include productName and productImage
+    // const items = cartItems.map((item) => ({
+    //   productId: item.productId,
+    //   productName: item.productName,
+    //   productImage: item.productImage,
+    //   quantity: item.quantity,
+    //   price: item.price,
+    // }));
 
-    // console.log("hhfffffffffffffffh", shippingInfo, cartItems, totalAmount );
-    const { items } = req.body;
-    console.log("-------------------", items.shippingInfo.fullName);
-    console.log(items.cartItems[0]);
     // Create an order document
     const order = new Order({
       fullName: items.shippingInfo.fullName,
-      address:  items.shippingInfo.address,
-      city:  items.shippingInfo.city,
-      state:  items.shippingInfo.state,
-      postalCode:  items.shippingInfo.postalCode,
-      country:  items.shippingInfo.country,
+      address: items.shippingInfo.address,
+      city: items.shippingInfo.city,
+      state: items.shippingInfo.state,
+      postalCode: items.shippingInfo.postalCode,
+      country: items.shippingInfo.country,
       items: items.cartItems[0],
       totalAmount: items.totalAmount,
     });
 
     await order.save();
 
-    res.status(201).json({ message: "Order placed successfully", order });
+    res.status(STATUS_CREATED).json({ message: MSG_ORDER_CREATED, order });
   } catch (error) {
     console.error("Error placing order:", error);
-    res.status(500).json({ message: "Failed to place order" });
+    res
+      .status(STATUS_INTERNAL_SERVER_ERROR)
+      .json({ message: MSG_INTERNAL_SERVER_ERROR });
   }
 };
 exports.fetchOrder = async (req, res) => {
   try {
     const orders = await Order.find();
-    console.log('Orders fetched successfully:', orders); 
+    console.log("Orders fetched successfully:", orders);
     res.status(STATUS_SUCCESS).json({ message: MSG_ORDERS_FETCHED, orders });
   } catch (error) {
     res
