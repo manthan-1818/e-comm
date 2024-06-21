@@ -1,0 +1,58 @@
+/* Payment.css */
+.payment-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f5f5f5;
+  }
+  
+  .paper-container {
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .card-details {
+    margin-bottom: 24px;
+  }
+  
+  .card-element-container {
+    padding: 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #fff;
+    margin-top: 8px;
+  }
+  
+  .error-message {
+    margin-bottom: 24px;
+  }
+  
+  .pay-button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .pay-button {
+    background-color: #d63384 !important;
+    color: white;
+    width: 150px;
+    &:hover {
+      background-color: #d63384 !important;
+    }
+  }
+  
+  
+  .processing-icon {
+    margin-right: 8px;
+  }
+  
+  .dialog-content {
+    border-radius: 2%;
+  }
+  

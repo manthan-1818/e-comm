@@ -53,6 +53,7 @@ a:hover {
   background-color: #fff;
   border-radius: 8px;
   border: 1px solid #e0e0e0;
+  margin-right: 10rem;
   padding: 16px;
   text-align: center;
   height: 100%;
@@ -70,6 +71,8 @@ a:hover {
   align-items: center;
   overflow: hidden;
   margin-bottom: 10px;
+  margin-right: 8px; 
+  margin-bottom: 8px; 
 }
 
 .product-image-container img {
@@ -102,4 +105,10 @@ a:hover {
   text-decoration: none;
 }
 
+.slick-list {
+  margin: 0 -5px;
+}
 
+.slick-slide > div {
+  margin: 0 5px; 
+} 

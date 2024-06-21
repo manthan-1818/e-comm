@@ -1,8 +1,12 @@
 import axiosInstance from '../services/axios';
 
-export const fetchAllOrders = async () => {
-  return axiosInstance.get('/order/fetch-order');
-};
 export const fetchOrders = async () => {
-  return axiosInstance.get('/order/fetch-orderr');
+  const response = await axiosInstance.get('/order/fetch-order');
+  console.log("hhhhhhhhhh",response.data);
+  return response.data; // Ensure this matches the structure { message: '', orders: [] }
 };
+
+// export const fetchAllOrders = async () => {
+//   const response = await axiosInstance.get('/order/fetch-order');
+// };
+// console.log("hhhhhhhhhh",response.data);

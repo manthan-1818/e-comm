@@ -1,11 +1,13 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import LocalMallIcon from "@mui/icons-material/LocalMall";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
-import ReorderIcon from "@mui/icons-material/Reorder";
+import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
+// import ReorderIcon from "@mui/icons-material/Reorder";
 import Box from "@mui/material/Box";
 import AllUsers from "../components/AllUsers";
 import AllProducts from "../components/AllProducts";
@@ -13,14 +15,19 @@ import Navbar from "../components/Navbar";
 
 const AdminPanel = () => {
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const navigate = useNavigate();
 
   const handleListItemClick = (index) => {
     setSelectedIndex(index);
+    if (index === 2) {
+      navigate("/order");
+    }
   };
 
   const sidebarItems = [
     { text: "All Users", icon: <ManageAccountsIcon /> },
     { text: "All Products", icon: <LocalMallIcon /> },
+    { text: "Orders", icon: <ShoppingBagIcon /> },
   ];
 
   const renderSidebar = () => (

@@ -17,6 +17,8 @@ import {
 import { clearCart } from "../redux/slice/cartSlice";
 import axiosInstance from "../utils/services/axios";
 import { useNavigate } from "react-router-dom";
+import { styled } from "@mui/system";
+import "../css/Payment.css";
 
 const Payment = () => {
   const order = useSelector((state) => state?.order?.orderDetails);
@@ -34,9 +36,10 @@ const Payment = () => {
   const [clientSecret, setClientSecret] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [zipCode, setZipCode] = useState("");
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     const fetchClientSecret = async () => {
       try {
@@ -70,6 +73,11 @@ const Payment = () => {
       {
         payment_method: {
           card: elements.getElement(CardElement),
+          billing_details: {
+            address: {
+              postal_code: zipCode,
+            },
+          },
         },
       }
     );
@@ -94,8 +102,6 @@ const Payment = () => {
       };
 
       try {
-        console.log("fhdfghdghfhdf", orderDetails);
-
         const response = await axiosInstance.post(
           "/order/add-order",
           orderDetails
@@ -123,77 +129,65 @@ const Payment = () => {
   };
 
   return (
-    <Paper
-      sx={{
-        padding: 3,
-        borderRadius: 2,
-        boxShadow: 3,
-        background: "#4dabf5",
-      }}
-    >
-      <form onSubmit={handleSubmit}>
-        <Box mb={3}>
-          <Typography component="span" variant="h6" sx={{ color: "#ffffff" }}>
-            Card Details
-          </Typography>
+    <Box className="payment-container">
+      <Paper className="paper-container">
+        <form onSubmit={handleSubmit}>
+          <Box className="card-details" mb={3}>
+            <Typography component="span" variant="h6" sx={{ color: "#333" }}>
+              Card Details
+            </Typography>
 
-          <Box
-            sx={{
-              padding: 2,
-              border: "1px solid #ccc",
-              borderRadius: 2,
-              backgroundColor: "white",
-              marginTop: 1,
-            }}
-          >
-            <CardElement id="cardElement" />
+            <Box className="card-element-container">
+              <CardElement id="cardElement" />
+            </Box>
           </Box>
-        </Box>
-        {error && (
-          <Box mb={3}>
-            <Alert severity="error">{error}</Alert>
+
+          {error && (
+            <Box className="error-message" mb={3}>
+              <Alert severity="error">{error}</Alert>
+            </Box>
+          )}
+
+          <Box className="pay-button-container">
+            <Button
+              type="submit"
+              variant="contained"
+              className="pay-button"
+              disabled={!stripe || !elements || loading}
+              startIcon={
+                loading && (
+                  <CircularProgress size={20} className="processing-icon" />
+                )
+              }
+            >
+              {loading ? "Processing..." : "Pay"}
+            </Button>
           </Box>
-        )}
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
+        </form>
+
+        <Dialog
+          open={open}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+          className="dialog-content"
         >
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            disabled={!stripe || !elements || loading}
-            startIcon={loading && <CircularProgress size={20} />}
-          >
-            {loading ? "Processing..." : "Pay"}
-          </Button>
-        </Box>
-      </form>
-
-      <Dialog
-        open={open}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-        sx={{ borderRadius: "2%" }}
-      >
-        <DialogTitle id="alert-dialog-title">
-          Order Placed Successfully
-        </DialogTitle>
-        <DialogContent>
-          <div className="w-50 h-50">
-            {/* <img src={image} alt="success" /> */}
-          </div>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog} autoFocus>
-            OK
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Paper>
+          <DialogTitle id="alert-dialog-title">
+            Order Placed Successfully
+          </DialogTitle>
+          <DialogContent>
+            <Typography variant="body1">
+              Thank you for your purchase! Your order has been placed
+              successfully.
+            </Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseDialog} autoFocus>
+              OK
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Paper>
+    </Box>
   );
 };
 
