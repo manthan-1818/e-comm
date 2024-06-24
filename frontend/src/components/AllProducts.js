@@ -31,6 +31,8 @@ import {
 } from "../utils/services/productservices";
 import { useSnackbar } from "notistack";
 import "../css/AllProduct.css";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 
 const AllProducts = () => {
   const [open, setOpen] = useState(false);
@@ -40,6 +42,8 @@ const AllProducts = () => {
   const [isUpdateMode, setIsUpdateMode] = useState(false);
   const [currentProduct, setCurrentProduct] = useState(null);
   const [products, setProducts] = useState([]);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null); 
   const { enqueueSnackbar } = useSnackbar();
   const {
     register,
@@ -80,28 +84,24 @@ const AllProducts = () => {
     setCurrentProduct(null);
     console.log("resetForm");
   };
-  
+
   const handleClose = () => {
     console.log("add close", currentProduct);
     setOpen(false);
     resetForm();
   };
-  
-  
+
   const handleUpdateClose = () => {
     console.log("update close ", currentProduct);
     setOpen(false);
     resetForm();
-   
   };
-  
 
   const handleAddProduct = () => {
     setOpen(true);
     resetForm();
     console.log("add product");
   };
-  
 
   const handleFileDrop = (_event, droppedFiles) => {
     const currentFileNames = selectedFiles.map((file) => file.name);
@@ -177,7 +177,6 @@ const AllProducts = () => {
         formData.append("productId", currentProduct._id);
         await updateProduct(formData);
         handleUpdateClose();
-
       } else {
         await addProduct(formData);
         handleClose();
@@ -198,9 +197,8 @@ const AllProducts = () => {
 
   const handleUpdateProduct = async (productId) => {
     try {
-
       const product = products.find((prod) => prod._id === productId);
-      console.log("ppp",product);
+      console.log("ppp", product);
       setCurrentProduct(product);
       setIsUpdateMode(true);
       reset(product);
@@ -227,8 +225,36 @@ const AllProducts = () => {
     }
   };
 
+  const toggleDeleteModal = () => {
+    setDeleteModalOpen(!deleteModalOpen);
+  };
+
+  const confirmDelete = (productId) => {
+    const product = products.find((prod) => prod._id === productId);
+    setSelectedProduct(product);
+    toggleDeleteModal();
+  };
+
+  const handleDelete = async () => {
+    if (selectedProduct) {
+      try {
+        await deleteProduct(selectedProduct._id);
+        fetchProducts();
+        enqueueSnackbar("Product deleted successfully", {
+          variant: "success",
+        });
+      } catch (error) {
+        enqueueSnackbar(`Error deleting product: ${error.message}`, {
+          variant: "error",
+        });
+      } finally {
+        toggleDeleteModal();
+      }
+    }
+  };
+
   return (
-    <>
+     <>
       <Button
         variant="contained"
         onClick={() => handleAddProduct(onSubmit)}
@@ -258,12 +284,15 @@ const AllProducts = () => {
           <Modal.Title>
             {isUpdateMode ? "Update Product" : "Add Product"}
           </Modal.Title>
-          {isUpdateMode ? <button className="btn btn-lg close" onClick={handleUpdateClose}>
-            <span aria-hidden="true">&times;</span>
-          </button> : <button className="btn btn-lg close" onClick={handleClose}>
-            <span aria-hidden="true">&times;</span>
-          </button>}
-          
+          {isUpdateMode ? (
+            <button className="btn btn-lg close" onClick={handleUpdateClose}>
+              <span aria-hidden="true">&times;</span>
+            </button>
+          ) : (
+            <button className="btn btn-lg close" onClick={handleClose}>
+              <span aria-hidden="true">&times;</span>
+            </button>
+          )}
         </Modal.Header>
 
         <Modal.Body>
@@ -392,7 +421,6 @@ const AllProducts = () => {
           </Form>
         </Modal.Body>
       </Modal>
-
       <Container>
         <Grid container spacing={3} style={{ marginTop: "20px" }}>
           {products?.length > 0 ? (
@@ -432,12 +460,11 @@ const AllProducts = () => {
                           <EditIcon />
                         </IconButton>
                         <IconButton
-  color="error"
-  onClick={() => handleRemoveProduct(product._id)}
->
-  <DeleteIcon />
-</IconButton>
-
+                          color="error"
+                          onClick={() => confirmDelete(product._id)}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
                       </div>
                     </Box>
                   </CardContent>
@@ -449,6 +476,21 @@ const AllProducts = () => {
           )}
         </Grid>
       </Container>
+
+      <Modal show={deleteModalOpen} onHide={toggleDeleteModal} centered>
+    
+      <Modal.Body className="text-center" style={{ padding: '0' ,marginTop:'1rem'}}>
+        <p>Are you sure you want to delete this product?</p>
+      </Modal.Body>
+      <Modal.Footer className="justify-content-center" style={{ borderTop: 'none', padding: '0' }}>
+        <Button variant="secondary" onClick={toggleDeleteModal} style={{ margin: '10px' }}>
+          Cancel
+        </Button>
+        <Button variant="danger" onClick={handleDelete} style={{ margin: '10px' }}>
+          Delete
+        </Button>
+      </Modal.Footer>
+    </Modal>
     </>
   );
 };

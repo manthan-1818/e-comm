@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import "../css/Productpage.css";
+import  Navbar  from "../components/Navbar";
 
 const modalStyle = {
   position: 'absolute',
@@ -27,7 +28,7 @@ const modalStyle = {
 const ProductPage = () => {
   const { id } = useParams();
   const cartData = useSelector((state) => state.cart?.items || []);
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated); // Access the auth slice's isAuthenticated
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated); 
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch();
@@ -37,7 +38,7 @@ const ProductPage = () => {
   const [product, setProduct] = useState(null);
   const [val, setVal] = useState(0);
   const [mainImage, setMainImage] = useState(null);
-  const [openModal, setOpenModal] = useState(false); // State for modal
+  const [openModal, setOpenModal] = useState(false); 
 
   useEffect(() => {
     const fetchedProduct = async (_id) => {
@@ -61,7 +62,7 @@ const ProductPage = () => {
   }, [id, enqueueSnackbar]);
 
   const handleCart = () => {
-    if (!isAuthenticated) { // Check if user is authenticated
+    if (!isAuthenticated) { 
       setOpenModal(true);
       return;
     }
@@ -74,7 +75,7 @@ const ProductPage = () => {
   };
 
   const handleBuyNow = (_id) => {
-    if (!isAuthenticated) { // Check if user is authenticated
+    if (!isAuthenticated) { 
       setOpenModal(true);
       return;
     }
@@ -83,7 +84,7 @@ const ProductPage = () => {
     const isProductInCart = cartData.find((item) => item._id === _id);
 
     if (isProductInCart) {
-      navigate("/cart/");
+      navigate("/checkout/");
     } else {
       dispatch(addToCart(product));
       navigate("/cart/");
@@ -100,7 +101,7 @@ const ProductPage = () => {
   };
 
   const handleLoginClick = () => {
-    navigate("/login"); // Redirect to login page
+    navigate("/login"); 
   };
 
   if (loading) {
@@ -114,6 +115,8 @@ const ProductPage = () => {
   const { productImage, productName, rating, price, description } = product;
 
   return (
+    <>
+    <Navbar/>
     <div className="container">
       <div className="product-gallery">
         <div className="thumbnails">
@@ -197,6 +200,7 @@ const ProductPage = () => {
         </Box>
       </Modal>
     </div>
+    </>
   );
 };
 

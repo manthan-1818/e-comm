@@ -14,10 +14,10 @@ import {
   DialogTitle,
   Paper,
 } from "@mui/material";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import { clearCart } from "../redux/slice/cartSlice";
 import axiosInstance from "../utils/services/axios";
 import { useNavigate } from "react-router-dom";
-import { styled } from "@mui/system";
 import "../css/Payment.css";
 
 const Payment = () => {
@@ -38,6 +38,7 @@ const Payment = () => {
   const [error, setError] = useState("");
   const [zipCode, setZipCode] = useState("");
   const [open, setOpen] = useState(false);
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -50,6 +51,7 @@ const Payment = () => {
           }
         );
         setClientSecret(response.data.clientSecret);
+        setError("");  
       } catch (error) {
         console.error("Failed to fetch client secret:", error);
         setError("Failed to fetch client secret");
@@ -62,6 +64,8 @@ const Payment = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
+    setError(""); 
+    setShowSuccessAlert(false);  
 
     if (!stripe || !elements) {
       setLoading(false);
@@ -81,6 +85,7 @@ const Payment = () => {
         },
       }
     );
+
     if (error) {
       setError(`Payment failed: ${error.message}`);
       setLoading(false);
@@ -108,9 +113,10 @@ const Payment = () => {
         );
 
         if (response.status === 201) {
-          setOpen(true);
+          setShowSuccessAlert(true);
+          setError("");  
           dispatch(clearCart());
-          navigate("/");
+          setOpen(true);
         }
       } catch (error) {
         setError(
@@ -118,6 +124,7 @@ const Payment = () => {
             error.response?.data?.message || error.message
           }`
         );
+        setShowSuccessAlert(false);  
       } finally {
         setLoading(false);
       }
@@ -126,6 +133,11 @@ const Payment = () => {
 
   const handleCloseDialog = () => {
     setOpen(false);
+    navigate("/");
+  };
+
+  const handleGoToHomePage = () => {
+    navigate("/");
   };
 
   return (
@@ -142,50 +154,53 @@ const Payment = () => {
             </Box>
           </Box>
 
-          {error && (
+          {error && !showSuccessAlert && (
             <Box className="error-message" mb={3}>
               <Alert severity="error">{error}</Alert>
             </Box>
           )}
 
-          <Box className="pay-button-container">
-            <Button
-              type="submit"
-              variant="contained"
-              className="pay-button"
-              disabled={!stripe || !elements || loading}
-              startIcon={
-                loading && (
-                  <CircularProgress size={20} className="processing-icon" />
-                )
-              }
-            >
-              {loading ? "Processing..." : "Pay"}
-            </Button>
-          </Box>
-        </form>
+          {showSuccessAlert && (
+            <Box className="success-message" mb={3}>
+              <Alert
+                iconMapping={{
+                  success: <CheckCircleOutlineIcon fontSize="inherit" />,
+                }}
+                severity="success"
+              >
+                Payment successful! Thank you for your purchase.
+              </Alert>
+              <Box mt={2} textAlign="center">
+              <Button
+  variant="contained"
+  onClick={handleGoToHomePage}
+  style={{ backgroundColor: '#d63384', color: '#ffffff' }}
+>
+  Go to Home Page
+</Button>
 
-        <Dialog
-          open={open}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-          className="dialog-content"
-        >
-          <DialogTitle id="alert-dialog-title">
-            Order Placed Successfully
-          </DialogTitle>
-          <DialogContent>
-            <Typography variant="body1">
-              Thank you for your purchase! Your order has been placed
-              successfully.
-            </Typography>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseDialog} autoFocus>
-              OK
-            </Button>
-          </DialogActions>
-        </Dialog>
+              </Box>
+            </Box>
+          )}
+
+          {!showSuccessAlert && (
+            <Box className="pay-button-container">
+              <Button
+                type="submit"
+                variant="contained"
+                className="pay-button"
+                disabled={!stripe || !elements || loading}
+                startIcon={
+                  loading && (
+                    <CircularProgress size={20} className="processing-icon" />
+                  )
+                }
+              >
+                {loading ? "Processing..." : "Pay"}
+              </Button>
+            </Box>
+          )}
+        </form>
       </Paper>
     </Box>
   );

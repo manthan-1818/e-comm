@@ -23,7 +23,6 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import { fetchOrders } from "../utils/services/orderservices";
-import Navbar from "../components/Navbar";
 
 const Order = () => {
   const [orders, setOrders] = useState([]);
@@ -75,7 +74,6 @@ const Order = () => {
 
   return (
     <Container>
-      <Navbar />
       <Typography variant="h4" gutterBottom>
         Your Orders
       </Typography>
@@ -115,7 +113,7 @@ const Order = () => {
         </Button>
       </Box>
       <Grid container spacing={2}>
-        {filteredOrders.map((order) => ( // Render filteredOrders instead of orders
+        {filteredOrders.map((order) => ( 
           <Grid item xs={12} key={order._id}>
             <Card variant="outlined">
               <CardContent>

@@ -12,6 +12,8 @@ import Box from "@mui/material/Box";
 import AllUsers from "../components/AllUsers";
 import AllProducts from "../components/AllProducts";
 import Navbar from "../components/Navbar";
+import Order from "../pages/Order"; 
+
 
 const AdminPanel = () => {
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -19,9 +21,9 @@ const AdminPanel = () => {
 
   const handleListItemClick = (index) => {
     setSelectedIndex(index);
-    if (index === 2) {
-      navigate("/order");
-    }
+    // if (index === 2) {
+    //   navigate("/order");
+    // }
   };
 
   const sidebarItems = [
@@ -51,11 +53,13 @@ const AdminPanel = () => {
         return <AllUsers />;
       case 1:
         return <AllProducts />;
+      case 2:
+        return <Order />; // Render Order component directly
       default:
         return <AllProducts />;
     }
   };
-
+  
   return (
     <>
       <Navbar />

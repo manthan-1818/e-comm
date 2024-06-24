@@ -102,7 +102,7 @@ const Navbar = () => {
   const isLoginPage = location.pathname === '/login';
   const isAdminPanelPage = location.pathname === '/admin-panel';
 
-  const itemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+const itemCount = cartItems.length;
 
   return (
     <nav className="navbar">

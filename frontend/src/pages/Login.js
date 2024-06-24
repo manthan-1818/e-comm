@@ -48,40 +48,41 @@ const Login = () => {
     <div>
       <Navbar />
       <div className="login-container">
-        <div className="login-form">
-          <h2>Login</h2>
-          <form onSubmit={handleSubmit(handleLogin)}>
-            <div className="input-group">
-              <label htmlFor="email">Email</label>
-              <input
-                type="email"
-                id="email"
-                {...register("email", { required: true })}
-                placeholder="Enter your email"
-              />
-              {errors.email && <p className="error">Email is required</p>}
-            </div>
-            <div className="input-group">
-              <label htmlFor="password">Password</label>
-              <input
-                type="password"
-                id="password"
-                {...register("password", { required: true })}
-                placeholder="Enter your password"
-              />
-              {errors.password && <p className="error">Password is required</p>}
-            </div>
-            <div className="btn-group">
-              <button type="submit" className="login-btn">
-                Login
-              </button>
-            </div>
-          </form>
-          <p class="mt-2">
-            Don't have an account? <a href="/signup">Sign Up</a>
-          </p>
-        </div>
+  <div className="login-form">
+    <h2>Login</h2>
+    <form onSubmit={handleSubmit(handleLogin)}>
+      <div className="input-group">
+        <label htmlFor="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          {...register("email", { required: true })}
+          placeholder="Enter your email"
+        />
+        {errors.email && <p className="error">Email is required</p>}
       </div>
+      <div className="input-group">
+        <label htmlFor="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          {...register("password", { required: true })}
+          placeholder="Enter your password"
+        />
+        {errors.password && <p className="error">Password is required</p>}
+      </div>
+      <div className="btn-group">
+        <button type="submit" className="login-btn">
+          Login
+        </button>
+      </div>
+    </form>
+    <p className="mt-2">
+      Don't have an account? <a href="/signup">Sign Up</a>
+    </p>
+  </div>
+</div>
+
       <Footer />
     </div>
   );

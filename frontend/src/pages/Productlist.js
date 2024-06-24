@@ -13,6 +13,7 @@ import {
 import { useLocation, useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/services/axios";
 import "../css/Productlist.css";
+import Navbar from "../components/Navbar";
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
@@ -77,100 +78,103 @@ const ProductList = () => {
   };
 
   return (
-    <Container>
-      <Grid container spacing={3}>
-        <Grid item xs={12}>
-          <Typography
-            variant="h4"
-            component="h1"
-            gutterBottom
-            style={{ marginTop: "20px", marginBottom: "0" }}
-          >
-            Product List
-          </Typography>
-        </Grid>
-        <Grid item xs={12} md={9}>
-          {loading ? (
-            <Box
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              minHeight="60vh"
+    <>
+      <Navbar />
+      <Container>
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <Typography
+              variant="h4"
+              component="h1"
+              gutterBottom
+              style={{ marginTop: "20px", marginBottom: "0" }}
             >
-              <Typography variant="h5">Loading...</Typography>
-            </Box>
-          ) : filteredProducts.length === 0 ? (
-            <Typography variant="body1">No products found.</Typography>
-          ) : (
-            <Grid container spacing={3} justifyContent="flex-start">
-              {filteredProducts.map((product) => (
-                <Grid item key={product._id} xs={12} sm={6} md={4} lg={3}>
-                  <Card
-                    className="card"
-                    onClick={() => handleCardClick(product._id)}
-                    style={{ cursor: "pointer" }}
-                  >
-                    <CardMedia
-                      component="img"
-                      height="140"
-                      image={product.productImage[0]}
-                      alt={product.productName}
-                    />
-                    <CardContent className="card-content">
-                      <Typography variant="h6" component="div" gutterBottom>
-                        {product.productName}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        paragraph
-                        className="card-description"
-                      >
-                        {product.description}
-                      </Typography>
-                      <Box className="card-footer">
-                        <Typography variant="body1" color="text.primary">
-                          ${product.price}
-                        </Typography>
-                        <Typography variant="body1" color="text.secondary">
-                          {product.rating} ★
-                        </Typography>
-                      </Box>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
-          )}
-        </Grid>
-        <Grid item xs={12} md={3}>
-          <Box>
-            <Typography variant="h5" component="h2" gutterBottom>
-              Filters
+              Product List
             </Typography>
-            <Box>
-              <TextField
-                select
-                label="Filter by Brand"
-                value={brandFilter}
-                onChange={(e) => setBrandFilter(e.target.value)}
-                variant="outlined"
-                fullWidth
+          </Grid>
+          <Grid item xs={12} md={9}>
+            {loading ? (
+              <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                minHeight="60vh"
               >
-                <MenuItem key="" value="">
-                  All Brands
-                </MenuItem>
-                {brands.map((brand) => (
-                  <MenuItem key={brand} value={brand}>
-                    {brand}
-                  </MenuItem>
+                <Typography variant="h5">Loading...</Typography>
+              </Box>
+            ) : filteredProducts.length === 0 ? (
+              <Typography variant="body1">No products found.</Typography>
+            ) : (
+              <Grid container spacing={3} justifyContent="flex-start">
+                {filteredProducts.map((product) => (
+                  <Grid item key={product._id} xs={12} sm={6} md={4} lg={3}>
+                    <Card
+                      className="card"
+                      onClick={() => handleCardClick(product._id)}
+                      style={{ cursor: "pointer" }}
+                    >
+                      <CardMedia
+                        component="img"
+                        height="140"
+                        image={product.productImage[0]}
+                        alt={product.productName}
+                      />
+                      <CardContent className="card-content">
+                        <Typography variant="h6" component="div" gutterBottom>
+                          {product.productName}
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          paragraph
+                          className="card-description"
+                        >
+                          {product.description}
+                        </Typography>
+                        <Box className="card-footer">
+                          <Typography variant="body1" color="text.primary">
+                            ${product.price}
+                          </Typography>
+                          <Typography variant="body1" color="text.secondary">
+                            {product.rating} ★
+                          </Typography>
+                        </Box>
+                      </CardContent>
+                    </Card>
+                  </Grid>
                 ))}
-              </TextField>
+              </Grid>
+            )}
+          </Grid>
+          <Grid item xs={12} md={3}>
+            <Box>
+              <Typography variant="h5" component="h2" gutterBottom>
+                Filters
+              </Typography>
+              <Box>
+                <TextField
+                  select
+                  label="Filter by Brand"
+                  value={brandFilter}
+                  onChange={(e) => setBrandFilter(e.target.value)}
+                  variant="outlined"
+                  fullWidth
+                >
+                  <MenuItem key="" value="">
+                    All Brands
+                  </MenuItem>
+                  {brands.map((brand) => (
+                    <MenuItem key={brand} value={brand}>
+                      {brand}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Box>
             </Box>
-          </Box>
+          </Grid>
         </Grid>
-      </Grid>
-    </Container>
+      </Container>
+    </>
   );
 };
 
