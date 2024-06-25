@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   Container,
@@ -10,9 +10,8 @@ import {
   Divider,
 } from "@mui/material";
 import Navbar from "../components/Navbar";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { placeOrder } from "../redux/slice/orderSlice";
-import { clearCart } from "../redux/slice/cartSlice";
 
 const Checkout = () => {
   const cartItems = useSelector((state) => state.cart.items);
@@ -22,6 +21,8 @@ const Checkout = () => {
       0
     )
   );
+  const location = useLocation();
+  const buyNowProduct = location.state?.buyNowProduct || null;
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -34,6 +35,12 @@ const Checkout = () => {
     country: "",
   });
 
+  useEffect(() => {
+    if (!buyNowProduct && cartItems.length === 0) {
+      navigate("/cart");
+    }
+  }, [buyNowProduct, cartItems, navigate]);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setShippingInfo({ ...shippingInfo, [name]: value });
@@ -42,19 +49,33 @@ const Checkout = () => {
   const handleProceedToPayment = () => {
     const orderDetails = {
       shippingInfo: shippingInfo,
-      cartItems: cartItems.map((item) => ({
-        productId: item._id,
-        productName: item.productName,
-        productImage: item.productImage,
-        quantity: item.quantity,
-        price: item.price,
-      })),
-      totalAmount: totalAmount,
+      cartItems: buyNowProduct
+        ? [
+            {
+              productId: buyNowProduct._id,
+              productName: buyNowProduct.productName,
+              productImage: buyNowProduct.productImage,
+              quantity: 1,
+              price: buyNowProduct.price,
+            },
+          ]
+        : cartItems.map((item) => ({
+            productId: item._id,
+            productName: item.productName,
+            productImage: item.productImage,
+            quantity: item.quantity,
+            price: item.price,
+          })),
+      totalAmount: buyNowProduct
+        ? buyNowProduct.price
+        : totalAmount,
     };
     console.log("Order Details:", orderDetails);
     dispatch(placeOrder(orderDetails));
     navigate("/payment");
   };
+
+  const displayedItems = buyNowProduct ? [buyNowProduct] : cartItems;
 
   return (
     <>
@@ -123,7 +144,7 @@ const Checkout = () => {
               Order Summary
             </Typography>
             <Box sx={{ mb: 2 }}>
-              {cartItems.map((item) => (
+              {displayedItems.map((item) => (
                 <Box
                   key={item._id}
                   sx={{
@@ -133,10 +154,10 @@ const Checkout = () => {
                   }}
                 >
                   <Typography>
-                    {item.productName} (x{item.quantity})
+                    {item.productName} (x{item.quantity || 1})
                   </Typography>
                   <Typography>
-                    ${(item.price * item.quantity).toFixed(2)}
+                    ${(item.price * (item.quantity || 1)).toFixed(2)}
                   </Typography>
                 </Box>
               ))}

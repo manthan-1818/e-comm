@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import "../css/Productpage.css";
-import  Navbar  from "../components/Navbar";
+import Navbar from "../components/Navbar";
 
 const modalStyle = {
   position: 'absolute',
@@ -28,7 +28,7 @@ const modalStyle = {
 const ProductPage = () => {
   const { id } = useParams();
   const cartData = useSelector((state) => state.cart?.items || []);
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated); 
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch();
@@ -38,7 +38,7 @@ const ProductPage = () => {
   const [product, setProduct] = useState(null);
   const [val, setVal] = useState(0);
   const [mainImage, setMainImage] = useState(null);
-  const [openModal, setOpenModal] = useState(false); 
+  const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
     const fetchedProduct = async (_id) => {
@@ -62,7 +62,7 @@ const ProductPage = () => {
   }, [id, enqueueSnackbar]);
 
   const handleCart = () => {
-    if (!isAuthenticated) { 
+    if (!isAuthenticated) {
       setOpenModal(true);
       return;
     }
@@ -75,20 +75,14 @@ const ProductPage = () => {
   };
 
   const handleBuyNow = (_id) => {
-    if (!isAuthenticated) { 
+    if (!isAuthenticated) {
       setOpenModal(true);
       return;
     }
 
     if (!product) return;
-    const isProductInCart = cartData.find((item) => item._id === _id);
 
-    if (isProductInCart) {
-      navigate("/checkout/");
-    } else {
-      dispatch(addToCart(product));
-      navigate("/cart/");
-    }
+    navigate("/checkout", { state: { buyNowProduct: product } });
   };
 
   const handleImage = (image, index) => {
@@ -101,7 +95,7 @@ const ProductPage = () => {
   };
 
   const handleLoginClick = () => {
-    navigate("/login"); 
+    navigate("/login");
   };
 
   if (loading) {
@@ -116,90 +110,91 @@ const ProductPage = () => {
 
   return (
     <>
-    <Navbar/>
-    <div className="container">
-      <div className="product-gallery">
-        <div className="thumbnails">
-          {productImage.map((image, index) => (
-            <img
-              key={index}
-              src={image}
-              alt={`Thumbnail ${index + 1}`}
-              onMouseEnter={() => handleImage(image, index)}
-            />
-          ))}
-        </div>
-      </div>
-      <div className="main-image">
-        <div className="image-container">
-          <img src={mainImage || productImage[val]} alt="Main Product" />
-        </div>
-        <div className="buttons">
-          <button className="add-to-cart" onClick={handleCart}>
-            Add to Cart
-          </button>
-          <button className="buy-now" onClick={() => handleBuyNow(product._id)}>
-            <FlashOnIcon /> BUY NOW
-          </button>
-        </div>
-      </div>
-      <div className="product-details">
-        <h1>{productName}</h1>
-        <div className="rating">
-          <span>{rating} ★</span>
-        </div>
-        <div className="price">
-          <span className="current-price">₹{price}</span>
-        </div>
-        <div className="availability">
-          <div className="pincode-container">
-            <input type="text" placeholder="Enter Delivery Pincode" />
-            <button className="check-button">Check</button>
+      <Navbar />
+      <div className="container">
+        <div className="product-gallery">
+          <div className="thumbnails">
+            {productImage.map((image, index) => (
+              <img
+                key={index}
+                src={image}
+                alt={`Thumbnail ${index + 1}`}
+                onMouseEnter={() => handleImage(image, index)}
+              />
+            ))}
           </div>
-          <span className="note">Currently out of stock in this area.</span>
         </div>
-        <div className="highlights">
-          <h3>Description</h3>
-          <p>{description}</p>
+        <div className="main-image">
+          <div className="image-container">
+            <img src={mainImage || productImage[val]} alt="Main Product" />
+          </div>
+          <div className="buttons">
+            <button className="add-to-cart" onClick={handleCart}>
+              Add to Cart
+            </button>
+            <button className="buy-now" onClick={() => handleBuyNow(product._id)}>
+              <FlashOnIcon /> BUY NOW
+            </button>
+          </div>
         </div>
-      </div>
+        <div className="product-details">
+          <h1>{productName}</h1>
+          <div className="rating">
+            <span>{rating} ★</span>
+          </div>
+          <div className="price">
+            <span className="current-price">₹{price}</span>
+          </div>
+          <div className="availability">
+            <div className="pincode-container">
+              <input type="text" placeholder="Enter Delivery Pincode" />
+              <button className="check-button">Check</button>
+            </div>
+            <span className="note">Currently out of stock in this area.</span>
+          </div>
+          <div className="highlights">
+            <h3>Description</h3>
+            <p>{description}</p>
+          </div>
+        </div>
 
-      <Modal
-        open={openModal}
-        onClose={handleCloseModal}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={modalStyle}>
-          <Typography 
-            id="modal-modal-title" 
-            variant="h6" 
-            component="h2" 
-            sx={{ mb: 2, textAlign: 'center', fontWeight: 'bold' }}
-          >
-            Missing Cart items?
-          </Typography>
-          <Typography 
-            id="modal-modal-description" 
-            sx={{ mt: 2, textAlign: 'center' }}
-          >
- Please log in to add items to your cart.          </Typography>
-          <Grid container justifyContent="center" sx={{ mt: 4 }}>
-            <Button 
-              onClick={handleLoginClick} 
-              variant="contained" 
-              sx={{ 
-                backgroundColor: '#d63384', 
-                color: 'white', 
-                '&:hover': { backgroundColor: '#d63384' } 
-              }}
+        <Modal
+          open={openModal}
+          onClose={handleCloseModal}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={modalStyle}>
+            <Typography
+              id="modal-modal-title"
+              variant="h6"
+              component="h2"
+              sx={{ mb: 2, textAlign: 'center', fontWeight: 'bold' }}
             >
-              Login
-            </Button>
-          </Grid>
-        </Box>
-      </Modal>
-    </div>
+              Missing Cart items?
+            </Typography>
+            <Typography
+              id="modal-modal-description"
+              sx={{ mt: 2, textAlign: 'center' }}
+            >
+              Please log in to add items to your cart.
+            </Typography>
+            <Grid container justifyContent="center" sx={{ mt: 4 }}>
+              <Button
+                onClick={handleLoginClick}
+                variant="contained"
+                sx={{
+                  backgroundColor: '#d63384',
+                  color: 'white',
+                  '&:hover': { backgroundColor: '#d63384' }
+                }}
+              >
+                Login
+              </Button>
+            </Grid>
+          </Box>
+        </Modal>
+      </div>
     </>
   );
 };

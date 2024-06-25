@@ -88,3 +88,14 @@ export const deleteProduct = async (productId) => {
     throw error;
   }
 };
+
+export const search = async (query) => {
+  try {
+    const response = await axiosInstance.post(`/product/search`, { query });
+    console.log("jfhlhjfsfsf", response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error searching products:', error);
+    throw error;
+  }
+};

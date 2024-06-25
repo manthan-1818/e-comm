@@ -3,7 +3,7 @@ import { Container, Typography } from "@mui/material";
 import Carousel from "react-bootstrap/Carousel";
 import Category from "./Category";
 // import { Container } from "react-bootstrap";
-import CustomCarousel from "../utils/services/style";
+import CustomCarousel from "../pages/style";
 import ProductCategories from "./ProductCategories";
 import image1 from "../images/i1.jpg";
 import image2 from "../images/i2.jpg";

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
@@ -10,13 +10,14 @@ import LocalMallIcon from '@mui/icons-material/LocalMall';
 import SearchIcon from '@mui/icons-material/Search';
 import InputBase from '@mui/material/InputBase';
 import Modal from '@mui/material/Modal';
+import '../css/Navbar.css';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Badge from '@mui/material/Badge';
 import IconButton from '@mui/material/IconButton';
-import '../css/Navbar.css';
 import { logout } from '../redux/slice/authSlice';
 import image from "../images/logo.png";
+import { search } from '../utils/services/productservices';
 
 const IconTextWrapper = styled('div')({
   display: 'flex',
@@ -47,9 +48,18 @@ const Navbar = () => {
   const location = useLocation();
   const cartItems = useSelector((state) => state.cart.items);
   const [searchTerm, setSearchTerm] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const open = Boolean(anchorEl);
+console.log("kkkkkkkkkkkkkk",searchResults);
+  useEffect(() => {
+    if (searchTerm) {
+      handleSearch(searchTerm);
+    } else {
+      setSearchResults([]);
+    }
+  }, [searchTerm]);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -57,10 +67,6 @@ const Navbar = () => {
 
   const handleClose = () => {
     setAnchorEl(null);
-  };
-
-  const handleSearch = () => {
-    navigate(`/search?term=${encodeURIComponent(searchTerm)}`);
   };
 
   const handleInputChange = (event) => {
@@ -99,10 +105,32 @@ const Navbar = () => {
     setOpenModal(false);
   };
 
+  const handleSearch = async (term) => {
+    try {
+      console.log('Searching for:', term); 
+      const response = await search(term);
+      console.log('Full response:', Array.isArray(response)); 
+      if (response) {
+        setSearchResults(response);
+      } else {
+        console.error('Search results are not an array:', response.data);
+        setSearchResults([]);
+      }
+    } catch (error) {
+      console.error('Error searching:', error);
+      setSearchResults([]);
+    }
+  };
+
+  const handleResultClick = (id) => {
+    navigate(`/Productpage/${id}`);
+    setSearchResults([]); 
+  };
+
   const isLoginPage = location.pathname === '/login';
   const isAdminPanelPage = location.pathname === '/admin-panel';
 
-const itemCount = cartItems.length;
+  const itemCount = cartItems.length;
 
   return (
     <nav className="navbar">
@@ -117,7 +145,7 @@ const itemCount = cartItems.length;
         <div className="spacer"></div>
         <div className="search-bar">
           <div>
-            <SearchIcon   />
+            <SearchIcon />
           </div>
           <InputBase
             placeholder="Search products, brands, and more..."
@@ -126,11 +154,20 @@ const itemCount = cartItems.length;
             onChange={handleInputChange}
             onKeyPress={(event) => {
               if (event.key === 'Enter') {
-                handleSearch();
+                handleSearch(searchTerm);
               }
             }}
             style={{ width: '300px' }}
           />
+          {searchResults.length > 0 && (
+            <ul className="search-results">
+              {searchResults.map((result) => (
+                <li key={result._id} onClick={() => handleResultClick(result._id)}>
+                  {result.productName}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
 
@@ -199,7 +236,7 @@ const itemCount = cartItems.length;
           <li>
             <IconButton color="inherit" onClick={handleCartClick} className="customButton">
               {isAuthenticated ? (
-                 <Badge badgeContent={itemCount} className="customBadge">
+                <Badge badgeContent={itemCount} className="customBadge">
                   <IconTextWrapper>
                     <LocalMallIcon sx={{ color: 'black' }} />
                     <Typography
@@ -248,7 +285,6 @@ const itemCount = cartItems.length;
                 <Button 
                   onClick={handleLoginClick} 
                   variant="contained" 
-                  
                   sx={{ 
                     backgroundColor: '#d63384', 
                     color: 'white', 

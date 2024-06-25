@@ -227,6 +227,26 @@ exports.deleteProduct = async (req, res) => {
       .json({ message: MSG_INTERNAL_SERVER_ERROR });
   }
 };
+exports.search = async (req, res) => {
+  try {
+    const { query } = req.body;
+    console.log("search query:", query);
+    const results = await Product.find({
+      $or: [
+        { productName: { $regex: query, $options: 'i' } },
+        { description: { $regex: query, $options: 'i' } },
+      ]
+    }).select('productName description price');
+
+    console.log('Search results:', results); // Log results for debugging
+
+    res.status(200).json(results);
+  } catch (error) {
+    console.error('Error searching:', error);
+    res.status(500).json({ error: 'An error occurred while searching products' });
+  }
+};
+
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
