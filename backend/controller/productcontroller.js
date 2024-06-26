@@ -238,7 +238,7 @@ exports.search = async (req, res) => {
       ]
     }).select('productName description price');
 
-    console.log('Search results:', results); // Log results for debugging
+    console.log('Search results:', results); 
 
     res.status(200).json(results);
   } catch (error) {

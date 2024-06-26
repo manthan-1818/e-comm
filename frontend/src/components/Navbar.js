@@ -52,7 +52,8 @@ const Navbar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const open = Boolean(anchorEl);
-console.log("kkkkkkkkkkkkkk",searchResults);
+  console.log("kkkkkkkkkkkkkk", searchResults);
+
   useEffect(() => {
     if (searchTerm) {
       handleSearch(searchTerm);
@@ -87,6 +88,11 @@ console.log("kkkkkkkkkkkkkk",searchResults);
     handleClose();
   };
 
+  const handleOrderDetails = () => {
+    navigate("/order-details");
+    handleClose();
+  };
+
   const handleLogout = () => {
     dispatch(logout());
     navigate('/');
@@ -107,9 +113,9 @@ console.log("kkkkkkkkkkkkkk",searchResults);
 
   const handleSearch = async (term) => {
     try {
-      console.log('Searching for:', term); 
+      console.log('Searching for:', term);
       const response = await search(term);
-      console.log('Full response:', Array.isArray(response)); 
+      console.log('Full response:', Array.isArray(response));
       if (response) {
         setSearchResults(response);
       } else {
@@ -124,7 +130,7 @@ console.log("kkkkkkkkkkkkkk",searchResults);
 
   const handleResultClick = (id) => {
     navigate(`/Productpage/${id}`);
-    setSearchResults([]); 
+    setSearchResults([]);
   };
 
   const isLoginPage = location.pathname === '/login';
@@ -139,7 +145,7 @@ console.log("kkkkkkkkkkkkkk",searchResults);
           <img
             src={image}
             alt="E-Commerce"
-            style={{ marginRight: '5px', width: '100px', height: '52px' }} 
+            style={{ marginRight: '5px', width: '100px', height: '52px' }}
           />
         </Link>
         <div className="spacer"></div>
@@ -205,6 +211,9 @@ console.log("kkkkkkkkkkkkkk",searchResults);
                     onClose={handleClose}
                   >
                     <MenuItem onClick={handleProfile}>Profile</MenuItem>
+                    {user?.role === "User" && (
+                      <MenuItem onClick={handleOrderDetails}>Order Details</MenuItem>
+                    )}
                     {!isAdminPanelPage && user?.role === "Admin" && (
                       <MenuItem onClick={handlePanel}>Admin Panel</MenuItem>
                     )}

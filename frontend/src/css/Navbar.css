@@ -78,7 +78,7 @@ button:focus-visible {
   height: 79px; 
 }
 .search-bar {
-  position: relative; /* Ensure relative positioning for absolute child */
+  position: relative; 
 }
 
 .search-results {
@@ -91,10 +91,10 @@ button:focus-visible {
   max-height: 200px;
   overflow-y: auto;
   position: absolute;
-  top: 100%; /* Position below the search bar */
+  top: 100%; 
   left: 0;
-  width: 300px; /* Adjust width as needed */
-  z-index: 1000; /* Ensure it's above other navbar elements */
+  width: 300px;
+  z-index: 1000;
   border-radius: 4px;
   
 }.search-results li {

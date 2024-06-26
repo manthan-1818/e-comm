@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
+import { useSelector } from "react-redux";
 import {
   Container,
   Typography,
@@ -21,14 +22,13 @@ import {
   Grid,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { useSelector } from "react-redux";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import { fetchOrder } from "../utils/services/orderservices";
+import Navbar from "../components/Navbar"
 
-const Order = () => {
+const OrderDetails = () => {
   const user = useSelector((state) => state.auth.user);
   const userId = user?._id;
-  console.log("u",user)
   const [orders, setOrders] = useState([]);
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [expandedOrderId, setExpandedOrderId] = useState(null);
@@ -37,26 +37,31 @@ const Order = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    const fetch = async () => {
+    const fetchOrderData = async () => {
       try {
-        const fetchedOrders = await fetchOrder(userId);
-        setOrders(fetchedOrders.orders);
-        setFilteredOrders(fetchedOrders.orders);
-        console.log("Fetched orders:", fetchedOrders);
+        const response = await fetchOrder(userId);
+        if (response && response.orders) {
+          setOrders(response.orders);
+          setFilteredOrders(response.orders);
+          console.log("Fetched orders:", response.orders);
+        } else {
+          enqueueSnackbar("Failed to fetch orders", { variant: "error" });
+        }
       } catch (error) {
         enqueueSnackbar(
-          `Failed to fetch the data. Please try again later. ${error.message}`,
-          {
-            variant: "error",
-          }
+          `Failed to fetch orders. Please try again later. ${error.message}`,
+          { variant: "error" }
         );
       }
     };
 
-    fetch();
-  }, []);
+    if (user) {
+      fetchOrderData();
+    }
+  }, [user, enqueueSnackbar]);
 
   useEffect(() => {
+ 
     const filtered = orders.filter((order) =>
       order.items.some((item) =>
         item.productName.toLowerCase().includes(searchTerm.toLowerCase())
@@ -74,6 +79,8 @@ const Order = () => {
   };
 
   return (
+    <>
+    <Navbar />
     <Container>
       <Typography variant="h4" gutterBottom>
         Your Orders
@@ -209,7 +216,8 @@ const Order = () => {
         ))}
       </Grid>
     </Container>
+    </>
   );
 };
 
-export default Order;
+export default OrderDetails;

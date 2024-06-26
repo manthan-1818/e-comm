@@ -39,7 +39,7 @@ const AllUsers = () => {
   const [open, setOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [userToDelete, setUserToDelete] = useState(null);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const currentUser = useSelector((state) => state.auth.user);
   const {
     register,
@@ -81,7 +81,7 @@ const AllUsers = () => {
 
   const handleDeleteClick = (rowData) => {
     setUserToDelete(rowData);
-    setShowDeleteModal(true);
+    setDeleteModalOpen(true);
   };
 
   const ActionRenderer = ({ data }) => (
@@ -130,20 +130,18 @@ const AllUsers = () => {
     },
   ];
 
-  const handleDeleteModalOpen = (rowData) => {
-    setUserToDelete(rowData);
-    setShowDeleteModal(true);
-  };
-
-  const handleDeleteModalClose = () => {
-    setShowDeleteModal(false);
+  const toggleDeleteModal = () => {
+    setDeleteModalOpen(!deleteModalOpen);
   };
 
   const handleDeleteConfirmed = async () => {
     try {
-      await deleteUserData(userToDelete._id);
-      setShowDeleteModal(false);
-      fetchData();
+      if (userToDelete) {
+        await deleteUserData(userToDelete._id);
+        setDeleteModalOpen(false);
+        setUserToDelete(null); // Clear userToDelete state after deletion
+        fetchData();
+      }
     } catch (error) {
       console.error("Error deleting user:", error);
     }
@@ -217,8 +215,34 @@ const AllUsers = () => {
         </Box>
       </Modal>
 
-      {/* Delete Confirmation Modal */}
       <Modal
+        open={deleteModalOpen}
+        onClose={toggleDeleteModal}
+        aria-labelledby="delete-modal-title"
+        aria-describedby="delete-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="delete-modal-description" sx={{ mt: 2 }}>
+            Are you sure you want to delete this user?
+          </Typography>
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+            <Button variant="contained" color="secondary" onClick={toggleDeleteModal} sx={{ mx: 1 }}>
+              Cancel
+            </Button>
+            <Button variant="contained" color="error" onClick={handleDeleteConfirmed} sx={{ mx: 1 }}>
+              Delete
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
+    </Container>
+  );
+};
+
+export default AllUsers;
+
+  {/* Delete Confirmation Modal */}
+      {/* <Modal
         open={showDeleteModal}
         onClose={handleDeleteModalClose}
         aria-labelledby="delete-modal-title"
@@ -239,8 +263,4 @@ const AllUsers = () => {
           </Button>
         </Box>
       </Modal>
-    </Container>
-  );
-};
-
-export default AllUsers;
+      <Modal show={deleteModalOpen} onHide={toggleDeleteModal} centered> */}

@@ -143,7 +143,7 @@ const ProductPage = () => {
             <span>{rating} ★</span>
           </div>
           <div className="price">
-            <span className="current-price">₹{price}</span>
+            <span className="current-price">${price}</span>
           </div>
           <div className="availability">
             <div className="pincode-container">

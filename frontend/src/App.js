@@ -13,6 +13,7 @@ import AdminPanel from "./pages/Adminpannel";
 import Profile from "./components/Profile";
 import Checkout from "./pages/Checkout";
 import Payment from "./pages/Payment";
+import OrderDetails from "./pages/Orderdetails";
 // const stripePromise = loadStripe(process.env.REACT_APP_PUBLISHABLE_KEY);
 
 const App = () => {
@@ -33,6 +34,7 @@ const App = () => {
             <Route path="/profile" element={<Profile />} /> 
             <Route path="/checkout" element={<Checkout />} /> 
             <Route path="/payment" element={<Payment />} /> 
+            <Route path="/order-details" element={<OrderDetails />} /> 
            
           </Routes>
         </div>

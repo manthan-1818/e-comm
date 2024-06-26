@@ -23,6 +23,7 @@ import "../css/Payment.css";
 const Payment = () => {
   const order = useSelector((state) => state?.order?.orderDetails);
   const userId = useSelector((state) => state.auth.user?._id);
+  console.log("ddddddddd", userId);
   const cartItems = useSelector((state) => state.cart.items);
   const totalAmount = useSelector((state) =>
     state.cart.items.reduce(
@@ -51,7 +52,7 @@ const Payment = () => {
           }
         );
         setClientSecret(response.data.clientSecret);
-        setError("");  
+        setError("");
       } catch (error) {
         console.error("Failed to fetch client secret:", error);
         setError("Failed to fetch client secret");
@@ -64,8 +65,8 @@ const Payment = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
-    setError(""); 
-    setShowSuccessAlert(false);  
+    setError("");
+    setShowSuccessAlert(false);
 
     if (!stripe || !elements) {
       setLoading(false);
@@ -103,7 +104,7 @@ const Payment = () => {
         items: order,
         totalAmount,
         paymentData,
-        userId,
+        user_id: userId,
       };
 
       try {
@@ -114,7 +115,7 @@ const Payment = () => {
 
         if (response.status === 201) {
           setShowSuccessAlert(true);
-          setError("");  
+          setError("");
           dispatch(clearCart());
           setOpen(true);
         }
@@ -124,7 +125,7 @@ const Payment = () => {
             error.response?.data?.message || error.message
           }`
         );
-        setShowSuccessAlert(false);  
+        setShowSuccessAlert(false);
       } finally {
         setLoading(false);
       }
@@ -171,14 +172,13 @@ const Payment = () => {
                 Payment successful! Thank you for your purchase.
               </Alert>
               <Box mt={2} textAlign="center">
-              <Button
-  variant="contained"
-  onClick={handleGoToHomePage}
-  style={{ backgroundColor: '#d63384', color: '#ffffff' }}
->
-  Go to Home Page
-</Button>
-
+                <Button
+                  variant="contained"
+                  onClick={handleGoToHomePage}
+                  style={{ backgroundColor: "#d63384", color: "#ffffff" }}
+                >
+                  Go to Home Page
+                </Button>
               </Box>
             </Box>
           )}

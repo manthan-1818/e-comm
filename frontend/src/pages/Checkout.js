@@ -77,6 +77,8 @@ const Checkout = () => {
 
   const displayedItems = buyNowProduct ? [buyNowProduct] : cartItems;
 
+  const grandTotal = buyNowProduct ? buyNowProduct.price : totalAmount;
+
   return (
     <>
       <Navbar />
@@ -165,7 +167,7 @@ const Checkout = () => {
             <Divider sx={{ mb: 2 }} />
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
               <Typography variant="h6">Total:</Typography>
-              <Typography variant="h6">${totalAmount.toFixed(2)}</Typography>
+              <Typography variant="h6">${grandTotal.toFixed(2)}</Typography>
             </Box>
           </Grid>
         </Grid>
