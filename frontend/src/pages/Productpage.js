@@ -71,7 +71,7 @@ const ProductPage = () => {
     dispatch(addToCart(product));
     console.log("Added to cart:", product);
     setToast(true);
-    navigate("/cart/");
+    navigate("/cart");
   };
 
   const handleBuyNow = (_id) => {
@@ -144,13 +144,6 @@ const ProductPage = () => {
           </div>
           <div className="price">
             <span className="current-price">${price}</span>
-          </div>
-          <div className="availability">
-            <div className="pincode-container">
-              <input type="text" placeholder="Enter Delivery Pincode" />
-              <button className="check-button">Check</button>
-            </div>
-            <span className="note">Currently out of stock in this area.</span>
           </div>
           <div className="highlights">
             <h3>Description</h3>
