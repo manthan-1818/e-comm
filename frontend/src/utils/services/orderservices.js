@@ -6,7 +6,3 @@ export const fetchOrder = async (userId) => {
   return response.data; 
 };
 
-// export const fetchAllOrders = async () => {
-//   const response = await axiosInstance.get('/order/fetch-order');
-// };
-// console.log("hhhhhhhhhh",response.data);

@@ -24,9 +24,6 @@ const Body = () => {
             <img className="d-block w-100" src={image1} alt="Third slide" />
           </Carousel.Item>
         </CustomCarousel>
-      <Container>
-        <Typography> </Typography>
-      </Container>
       <Container className="my-4">
         <Typography variant="h5">NIKE</Typography>
       </Container>

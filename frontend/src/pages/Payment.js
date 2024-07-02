@@ -23,7 +23,6 @@ import "../css/Payment.css";
 const Payment = () => {
   const order = useSelector((state) => state?.order?.orderDetails);
   const userId = useSelector((state) => state.auth.user?._id);
-  console.log("ddddddddd", userId);
   const cartItems = useSelector((state) => state.cart.items);
   const totalAmount = useSelector((state) =>
     state.cart.items.reduce(

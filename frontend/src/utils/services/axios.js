@@ -28,8 +28,6 @@ axiosInstance.interceptors.request.use(
 
 axiosInstance.interceptors.response.use(
   async (response) => {
-    // console.log("Response Interceptor:", response);
-
     if (response.data.accessToken) {
       const newAccessToken = response.data.accessToken;
       localStorage.setItem("accessToken", newAccessToken);
