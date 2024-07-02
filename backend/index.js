@@ -15,7 +15,7 @@ database();
 
 // Middleware
 app.use(express.json());
-app.use(cors({ origin: ["http://192.168.2.85:3000", "http://192.168.2.85:3000/", "http://localhost:3000/","http://localhost:3000"] }));
+app.use(cors({ origin: ["http://192.168.2.85:3000", "http://192.168.2.85:3000/", "http://localhost:3000/","http://localhost:3000","https://e-comm-opal.vercel.app/","https://e-comm-opal.vercel.app"] }));
 
 // Routes
 app.use("/submit", userRoutes);
