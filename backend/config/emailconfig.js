@@ -3,7 +3,7 @@ const fs = require("fs");
 const path = require("path");
 
 // Construct the absolute path to the email template
-const emailTemplatePath = path.join(__dirname, "helper", "images", "template.html");
+const emailTemplatePath = path.resolve(__dirname, `../helper/images/template.html`);
 
 // Read the email template
 const emailTemplate = fs.readFileSync(emailTemplatePath, "utf-8");
