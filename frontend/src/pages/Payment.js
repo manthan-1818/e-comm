@@ -46,7 +46,7 @@ const Payment = () => {
     const fetchClientSecret = async () => {
       try {
         const response = await axios.post(
-          "http://192.168.2.85:5000/product/create-payment-intent",
+          "https://e-comm-1-oz1r.onrender.com/product/create-payment-intent",
           {
             amount: totalAmount,
           }
