@@ -72,14 +72,4 @@ exports.fetchOrder = async (req, res) => {
   }
 };
 
-// exports.fetchOrder = async (req, res) => {
-//   try {
-//     const orders = await Order.find();
-//     console.log("Orders fetched successfully:", orders);
-//     res.status(STATUS_SUCCESS).json({ message: MSG_ORDERS_FETCHED, orders });
-//   } catch (error) {
-//     res
-//       .status(STATUS_INTERNAL_SERVER_ERROR)
-//       .json({ message: MSG_INTERNAL_SERVER_ERROR });
-//   }
-// };
+

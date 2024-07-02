@@ -144,7 +144,7 @@ exports.addProduct = async (req, res) => {
     const { productName, brandName, category, description, price } = req.body;
 
     const imageUrls = req.files.map((file) => {
-      return `http://192.168.2.85:5000/uploads/${file.originalname}`;
+      return `https://e-comm-1-oz1r.onrender.com/uploads/${file.originalname}`;
     });
 
     const newProduct = new Product({
@@ -173,7 +173,7 @@ exports.updateProduct = async (req, res) => {
       req.body;
 
     const imageUrls = req.files.map((file) => {
-      return `http://192.168.2.85:5000/uploads/${file.originalname}`;
+      return `https://e-comm-1-oz1r.onrender.com/uploads/${file.originalname}`;
     });
 
     const updateFields = {
