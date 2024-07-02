@@ -10,7 +10,6 @@ import LocalMallIcon from '@mui/icons-material/LocalMall';
 import SearchIcon from '@mui/icons-material/Search';
 import InputBase from '@mui/material/InputBase';
 import Modal from '@mui/material/Modal';
-import '../css/Navbar.css';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Badge from '@mui/material/Badge';
@@ -18,6 +17,7 @@ import IconButton from '@mui/material/IconButton';
 import { logout } from '../redux/slice/authSlice';
 import image from "../images/logo.png";
 import { search } from '../utils/services/productservices';
+import '../css/Navbar.css';
 
 const IconTextWrapper = styled('div')({
   display: 'flex',
@@ -163,7 +163,7 @@ const Navbar = () => {
                 handleSearch(searchTerm);
               }
             }}
-            style={{ width: '300px' }}
+            style={{ width: '100%' }}
           />
           {searchResults.length > 0 && (
             <ul className="search-results">
