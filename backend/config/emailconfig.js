@@ -25,7 +25,7 @@ const sendVerificationEmail = async (user, token) => {
     return;
   }
 
-  const url = `http://localhost:${process.env.PORT}/submit/verify/${token}`;
+  const url = `${process.env.BASE_URL}/submit/verify/${token}`;
 
   const emailBody = emailTemplate.replace("{{verificationUrl}}", url);
 
