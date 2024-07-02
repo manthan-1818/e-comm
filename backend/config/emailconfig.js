@@ -1,10 +1,14 @@
 const nodemailer = require("nodemailer");
 const fs = require("fs");
+const path = require("path");
 
-const emailTemplate = fs.readFileSync(
-  "/home/manthan/task/e-comm/backend/helper/images/template.html",
-  "utf-8"
-);
+// Construct the absolute path to the email template
+const emailTemplatePath = path.join(__dirname, "helper", "images", "template.html");
+
+// Read the email template
+const emailTemplate = fs.readFileSync(emailTemplatePath, "utf-8");
+
+// Your other code here...
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
