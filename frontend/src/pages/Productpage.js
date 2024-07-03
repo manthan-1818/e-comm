@@ -5,22 +5,23 @@ import FlashOnIcon from "@mui/icons-material/FlashOn";
 import { fetchProduct } from "../utils/services/productservices";
 import { addToCart } from "../redux/slice/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
-import Modal from '@mui/material/Modal';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import Grid from '@mui/material/Grid';
+import Modal from "@mui/material/Modal";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import Grid from "@mui/material/Grid";
+import Skeleton from "@mui/material/Skeleton";
 import "../css/Productpage.css";
 import Navbar from "../components/Navbar";
 
 const modalStyle = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
   width: 400,
-  bgcolor: 'background.paper',
-  borderRadius: '8px',
+  bgcolor: "background.paper",
+  borderRadius: "8px",
   boxShadow: 24,
   p: 4,
 };
@@ -33,7 +34,7 @@ const ProductPage = () => {
   const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch();
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState(false);
   const [product, setProduct] = useState(null);
   const [val, setVal] = useState(0);
@@ -98,15 +99,7 @@ const ProductPage = () => {
     navigate("/login");
   };
 
-  if (loading) {
-    return <div className="loading">Loading...</div>;
-  }
-
-  if (!product) {
-    return <div className="error">Product not found.</div>;
-  }
-
-  const { productImage, productName, rating, price, description } = product;
+  const { productImage, productName, rating, price, description } = product || {};
 
   return (
     <>
@@ -114,41 +107,75 @@ const ProductPage = () => {
       <div className="container">
         <div className="product-gallery">
           <div className="thumbnails">
-            {productImage.map((image, index) => (
-              <img
-                key={index}
-                src={image}
-                alt={`Thumbnail ${index + 1}`}
-                onMouseEnter={() => handleImage(image, index)}
-              />
-            ))}
+            {loading
+              ? Array.from(new Array(4)).map((_, index) => (
+                  <Skeleton
+                    key={index}
+                    variant="rectangular"
+                    width={60}
+                    height={60}
+                    sx={{ marginBottom: "8px" }}
+                  />
+                ))
+              : productImage.map((image, index) => (
+                  <img
+                    key={index}
+                    src={image}
+                    alt={`Thumbnail ${index + 1}`}
+                    onMouseEnter={() => handleImage(image, index)}
+                  />
+                ))}
           </div>
         </div>
         <div className="main-image">
           <div className="image-container">
-            <img src={mainImage || productImage[val]} alt="Main Product" />
+            {loading ? (
+              <Skeleton variant="rectangular" width={400} height={400} />
+            ) : (
+              <img src={mainImage || productImage[val]} alt="Main Product" />
+            )}
           </div>
           <div className="buttons">
-            <button className="add-to-cart" onClick={handleCart}>
-              Add to Cart
-            </button>
-            <button className="buy-now" onClick={() => handleBuyNow(product._id)}>
-              <FlashOnIcon /> BUY NOW
-            </button>
+            {loading ? (
+              <>
+                <Skeleton variant="rectangular" width={100} height={40} sx={{ marginBottom: "8px" }} />
+                <Skeleton variant="rectangular" width={100} height={40} />
+              </>
+            ) : (
+              <>
+                <button className="add-to-cart" onClick={handleCart}>
+                  Add to Cart
+                </button>
+                <button className="buy-now" onClick={() => handleBuyNow(product._id)}>
+                  <FlashOnIcon /> BUY NOW
+                </button>
+              </>
+            )}
           </div>
         </div>
         <div className="product-details">
-          <h1>{productName}</h1>
-          <div className="rating">
-            <span>{rating} ★</span>
-          </div>
-          <div className="price">
-            <span className="current-price">${price}</span>
-          </div>
-          <div className="highlights">
-            <h3>Description</h3>
-            <p>{description}</p>
-          </div>
+          {loading ? (
+            <>
+              <Skeleton variant="text" width={300} height={40} sx={{ marginBottom: "16px" }} />
+              <Skeleton variant="text" width={100} height={30} sx={{ marginBottom: "16px" }} />
+              <Skeleton variant="text" width={150} height={30} sx={{ marginBottom: "16px" }} />
+              <Skeleton variant="text" width={400} height={200} />
+            </>
+          ) : (
+            <>
+              <h1>{productName}</h1>
+              <div className="rating">
+                <span>{rating} ★</span>
+              </div>
+              <div className="price">
+                <span className="current-price">${price}</span>
+              </div>
+              <div className="highlights">
+                <h3>Description</h3>
+                <p>{description}</p>
+              </div>
+            </>
+          )}
         </div>
 
         <Modal
@@ -162,13 +189,13 @@ const ProductPage = () => {
               id="modal-modal-title"
               variant="h6"
               component="h2"
-              sx={{ mb: 2, textAlign: 'center', fontWeight: 'bold' }}
+              sx={{ mb: 2, textAlign: "center", fontWeight: "bold" }}
             >
               Missing Cart items?
             </Typography>
             <Typography
               id="modal-modal-description"
-              sx={{ mt: 2, textAlign: 'center' }}
+              sx={{ mt: 2, textAlign: "center" }}
             >
               Please log in to add items to your cart.
             </Typography>
@@ -177,9 +204,9 @@ const ProductPage = () => {
                 onClick={handleLoginClick}
                 variant="contained"
                 sx={{
-                  backgroundColor: '#d63384',
-                  color: 'white',
-                  '&:hover': { backgroundColor: '#d63384' }
+                  backgroundColor: "#d63384",
+                  color: "white",
+                  "&:hover": { backgroundColor: "#d63384" },
                 }}
               >
                 Login

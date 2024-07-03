@@ -28,7 +28,6 @@ import { fetchOrder } from "../utils/services/orderservices";
 const Order = () => {
   const user = useSelector((state) => state.auth.user);
   const userId = user?._id;
-  console.log("u",user)
   const [orders, setOrders] = useState([]);
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [expandedOrderId, setExpandedOrderId] = useState(null);

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Box, Typography, CircularProgress, Skeleton } from "@mui/material";
+import React, { useState, useEffect, useCallback } from "react";
+import { Box, Typography, Skeleton } from "@mui/material";
 import { Image } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { fetchCategoryProducts } from "../utils/services/productservices";
@@ -12,7 +12,7 @@ const Category = ({ category }) => {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
-  const fetchProductsFromCategory = async () => {
+  const fetchProductsFromCategory = useCallback(async () => {
     if (!category) {
       console.error("Category is undefined or empty in frontend");
       return;
@@ -30,55 +30,52 @@ const Category = ({ category }) => {
       setCategoryProduct(response.data);
     } catch (error) {
       console.error("Error fetching products by category:", error);
-
       enqueueSnackbar(`Failed to fetch the product. Please try again later. ${error.message}`, {
         variant: 'error',
       });
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleChange = (selectedCategory) => {
-    navigate(`/productlist?category=${selectedCategory}`);
-  };  
+  }, [category, enqueueSnackbar]);
 
   useEffect(() => {
     fetchProductsFromCategory();
-  }, [category]);
+  }, [category, fetchProductsFromCategory]);
+
+  const handleChange = (selectedCategory) => {
+    navigate(`/productlist?category=${selectedCategory}`);
+  };
+
+  const skeletonCount = categoryProduct.length || 10; 
 
   return (
     <div className="category-container">
       {loading ? (
-        <>
-          {Array.from({ length: 10 }).map((_, index) => ( 
-            <Box key={index} className="category-box">
-              <Skeleton variant="rectangular" width="80px" height="70px" style={{ borderRadius: '8px' }} />
-              <Box mt={1}>
-                <Skeleton variant="text" width="70%" style={{ borderRadius: '4px' }} />
-              </Box>
+        Array.from({ length: skeletonCount }).map((_, index) => (
+          <Box key={index} className="category-box">
+            <Skeleton variant="rectangular" width="80px" height="70px" style={{ borderRadius: '8px' }} />
+            <Box mt={1}>
+              <Skeleton variant="text" width="70%" style={{ borderRadius: '4px' }} />
             </Box>
-          ))}
-        </>
+          </Box>
+        ))
       ) : (
-        <>
-          {categoryProduct.length === 0 ? (
-            <Typography variant="body1">No products found for category {category}</Typography>
-          ) : (
-            categoryProduct.map((categoryItem, index) => (
-              <Box key={categoryItem._id} className="category-box" onClick={() => handleChange(categoryItem.category)}>
-                <Image
-                  src={categoryItem.productImage[0]}
-                  alt={categoryItem.productName}
-                  className="category-image"
-                />
-                <Typography variant="body2" className="category-text">
-                  {categoryItem.category}
-                </Typography>
-              </Box>
-            ))
-          )}
-        </>
+        categoryProduct.length === 0 ? (
+          <Typography variant="body1">No products found for category {category}</Typography>
+        ) : (
+          categoryProduct.map((categoryItem) => (
+            <Box key={categoryItem._id} className="category-box" onClick={() => handleChange(categoryItem.category)}>
+              <Image
+                src={categoryItem.productImage[0]}
+                alt={categoryItem.productName}
+                className="category-image"
+              />
+              <Typography variant="body2" className="category-text">
+                {categoryItem.category}
+              </Typography>
+            </Box>
+          ))
+        )
       )}
     </div>
   );

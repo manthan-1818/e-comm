@@ -254,30 +254,15 @@ const AllProducts = () => {
   };
 
   return (
-     <>
-      <Button
-        variant="contained"
-        onClick={() => handleAddProduct(onSubmit)}
-        style={{
-          position: "fixed",
-          top: "100px",
-          right: "30px",
-          zIndex: 999,
-          color: "white",
-          outline: "none",
-          backgroundColor: "#d63384",
-          border: "none",
-          borderRadius: "50%",
-          width: "50px",
-          height: "50px",
-          padding: "0",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <AddIcon fontSize="large" />
-      </Button>
+    <>
+     <Button
+  variant="contained"
+  onClick={() => handleAddProduct(onSubmit)}
+  className="add"
+>
+  <AddIcon fontSize="large" />
+</Button>
+
 
       <Modal show={open} onHide={handleClose} size="lg" centered>
         <Modal.Header>
@@ -304,7 +289,7 @@ const AllProducts = () => {
                 placeholder="Enter product name"
                 {...register("productName", { required: !isUpdateMode })}
               />
-              {errors.productName && (
+                           {errors.productName && (
                 <Form.Text className="text-danger">
                   Product name is required.
                 </Form.Text>
@@ -478,19 +463,18 @@ const AllProducts = () => {
       </Container>
 
       <Modal show={deleteModalOpen} onHide={toggleDeleteModal} centered>
-    
-      <Modal.Body className="text-center" style={{ padding: '0' ,marginTop:'1rem'}}>
-        <p>Are you sure you want to delete this product?</p>
-      </Modal.Body>
-      <Modal.Footer className="justify-content-center" style={{ borderTop: 'none', padding: '0' }}>
-        <Button variant="secondary" onClick={toggleDeleteModal} style={{ margin: '10px' }}>
-          Cancel
-        </Button>
-        <Button variant="danger" onClick={handleDelete} style={{ margin: '10px' }}>
-          Delete
-        </Button>
-      </Modal.Footer>
-    </Modal>
+        <Modal.Body className="text-center" style={{ padding: '0' ,marginTop:'1rem'}}>
+          <p>Are you sure you want to delete this product?</p>
+        </Modal.Body>
+        <Modal.Footer className="justify-content-center" style={{ borderTop: 'none', padding: '0' }}>
+          <Button variant="secondary" onClick={toggleDeleteModal} style={{ margin: '10px' }}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={handleDelete} style={{ margin: '10px' }}>
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 };

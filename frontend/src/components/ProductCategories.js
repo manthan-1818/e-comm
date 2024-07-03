@@ -1,10 +1,7 @@
-// ProductCategories.jsx
-
 import "../css/ProductCategories.css";
 import React, { useEffect, useState } from "react";
 import Slider from "react-slick";
-import LinearProgress from "@mui/material/LinearProgress";
-import { Container, Box, Typography } from "@mui/material";
+import { Container, Box, Typography, Skeleton } from "@mui/material";
 import { Link } from "react-router-dom";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -14,7 +11,7 @@ const ProductCategories = ({ brandName }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const  fetchProductBrands= async () => {
+  const fetchProductBrands = async () => {
     setLoading(true);
     try {
       const response = await fetchProductBrand(brandName);
@@ -37,8 +34,6 @@ const ProductCategories = ({ brandName }) => {
     speed: 500,
     slidesToShow: 6,
     slidesToScroll: 1,
-    nextArrow: <SampleNextArrow />,
-    prevArrow: <SamplePrevArrow />,
     responsive: [
       {
         breakpoint: 1200,
@@ -61,79 +56,84 @@ const ProductCategories = ({ brandName }) => {
           slidesToScroll: 1,
         },
       },
+      {
+        breakpoint: 320,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+      },
     ],
   };
-  
-
-  function SampleNextArrow(props) {
-    const { className, onClick } = props;
-    return (
-      <div className={`${className} custom-arrow next-arrow`} onClick={onClick}>
-        <div className="arrow-icon"></div>
-      </div>
-    );
-  }
-
-  function SamplePrevArrow(props) {
-    const { className, onClick } = props;
-    return (
-      <div className={`${className} custom-arrow prev-arrow`} onClick={onClick}>
-        <div className="arrow-icon"></div>
-      </div>
-    );
-  }
-
   return (
-    <>
-      {loading ? (
-        <LinearProgress color="secondary" />
-      ) : (
-        <Container>
-          <Slider {...settings}>
-            {products.map((product) => (
-              <Link
-                to={`/Productpage/${product._id}`}
-                style={{
-                  textDecoration: "none",
-                  "&:hover": { textDecoration: "none" },
-                }}
-                key={product._id}
-              >
-                <Box className="product-card" marginRight={2} marginBottom={2}>
-                  <Box className="product-image-container">
-                    <img src={product.productImage[0]} alt={product.productName} />
+    <Container>
+      <Slider {...settings}>
+        {(loading ? Array.from(Array(6)) : products).map((product, index) => (
+          <Link
+            to={product ? `/Productpage/${product._id}` : "/"}
+            style={{
+              textDecoration: "none",
+              "&:hover": { textDecoration: "none" },
+            }}
+            key={index}
+          >
+            <Box className="product-card" marginRight={2} marginBottom={2}>
+              <Box className="product-image-container">
+                {loading ? (
+                  <Skeleton
+                    variant="rectangular"
+                    className="product-image-skeleton"
+                  />
+                ) : (
+                  <img
+                    src={product.productImage[0]}
+                    alt={product.productName}
+                  />
+                )}
+              </Box>
+              <Box className="product-info">
+                {loading ? (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      marginBottom: "0.5rem",
+                    }}
+                  >
+                    <Skeleton variant="text" width="80%" />
+                    <Skeleton variant="text" width="60%" />
                   </Box>
-                  <Box className="product-info">
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        marginBottom: "0.5rem",
-                      }}
+                ) : (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      marginBottom: "0.5rem",
+                    }}
+                  >
+                    <Typography
+                      variant="body1"
+                      style={{ marginBottom: "0.5rem" }}
                     >
-                      <Typography
-                        variant="body1"
-                        style={{ marginBottom: "0.5rem" }}
-                      >
-                        {product.productName}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        color="textSecondary"
-                        className="price"
-                      >
-                       $ {product.price}
-                      </Typography>
-                    </Box>
+                      {product.productName}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      className="price"
+                    >
+                      $ {product.price}
+                    </Typography>
                   </Box>
-                </Box>
-              </Link>
-            ))}
-          </Slider>
-        </Container>
-      )}
-    </>
+                )}
+              </Box>
+            </Box>
+          </Link>
+        ))}
+      </Slider>
+    </Container>
   );
 };
 

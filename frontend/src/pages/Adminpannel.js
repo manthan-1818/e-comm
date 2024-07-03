@@ -7,7 +7,6 @@ import ListItemText from "@mui/material/ListItemText";
 import LocalMallIcon from "@mui/icons-material/LocalMall";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
-// import ReorderIcon from "@mui/icons-material/Reorder";
 import Box from "@mui/material/Box";
 import AllUsers from "../components/AllUsers";
 import AllProducts from "../components/AllProducts";
@@ -21,9 +20,6 @@ const AdminPanel = () => {
 
   const handleListItemClick = (index) => {
     setSelectedIndex(index);
-    // if (index === 2) {
-    //   navigate("/order");
-    // }
   };
 
   const sidebarItems = [
@@ -54,7 +50,7 @@ const AdminPanel = () => {
       case 1:
         return <AllProducts />;
       case 2:
-        return <Order />; // Render Order component directly
+        return <Order />; 
       default:
         return <AllProducts />;
     }
