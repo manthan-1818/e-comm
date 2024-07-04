@@ -19,11 +19,15 @@ import {
   CardActions,
   Divider,
   Grid,
+  Dialog,
+  DialogTitle,
+  DialogContent,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { useSelector } from "react-redux";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import { useSelector } from "react-redux";
 import { fetchOrder } from "../utils/services/orderservices";
+import Invoice from "../pages/Invoice";
 
 const Order = () => {
   const user = useSelector((state) => state.auth.user);
@@ -31,6 +35,7 @@ const Order = () => {
   const [orders, setOrders] = useState([]);
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [expandedOrderId, setExpandedOrderId] = useState(null);
+  const [selectedOrder, setSelectedOrder] = useState(null);
   const { enqueueSnackbar } = useSnackbar();
   const [filter, setFilter] = useState("past 3 months");
   const [searchTerm, setSearchTerm] = useState("");
@@ -53,7 +58,7 @@ const Order = () => {
     };
 
     fetch();
-  }, []);
+  }, [userId, enqueueSnackbar]);
 
   useEffect(() => {
     const filtered = orders.filter((order) =>
@@ -70,6 +75,14 @@ const Order = () => {
 
   const handleSearch = () => {
     console.log("Searching for:", searchTerm);
+  };
+
+  const handleOpenInvoice = (order) => {
+    setSelectedOrder(order);
+  };
+
+  const handleCloseInvoice = () => {
+    setSelectedOrder(null);
   };
 
   return (
@@ -195,9 +208,10 @@ const Order = () => {
                   size="small"
                   variant="contained"
                   color="primary"
+                  onClick={() => handleOpenInvoice(order)}
                   sx={{ bgcolor: "#d63384", "&:hover": { bgcolor: "#b82b6e" } }}
                 >
-                  Track package
+                  View Invoice
                 </Button>
                 <Button size="small" variant="outlined">
                   Get help
@@ -207,6 +221,12 @@ const Order = () => {
           </Grid>
         ))}
       </Grid>
+      <Dialog open={!!selectedOrder} onClose={handleCloseInvoice} maxWidth="md" fullWidth>
+        <DialogTitle>Invoice</DialogTitle>
+        <DialogContent>
+          {selectedOrder && <Invoice order={selectedOrder} />}
+        </DialogContent>
+      </Dialog>
     </Container>
   );
 };

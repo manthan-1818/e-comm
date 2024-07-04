@@ -27,13 +27,17 @@ const Cart = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Simulate loading time
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 2000); // Set loading to false after 2 seconds
+    // Only show loading if there are items in the cart
+    if (cartItems.length > 0) {
+      const timer = setTimeout(() => {
+        setLoading(false);
+      }, 2000); // Set loading to false after 2 seconds
 
-    return () => clearTimeout(timer);
-  }, []);
+      return () => clearTimeout(timer);
+    } else {
+      setLoading(false); // No need to load if the cart is empty
+    }
+  }, [cartItems]);
 
   const handleQuantityChange = (id, newQuantity) => {
     if (newQuantity > 0) {

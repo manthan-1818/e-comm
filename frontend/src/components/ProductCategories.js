@@ -3,7 +3,6 @@
 import "../css/ProductCategories.css";
 import React, { useEffect, useState } from "react";
 import Slider from "react-slick";
-import LinearProgress from "@mui/material/LinearProgress";
 import { Container, Box, Typography, Skeleton } from "@mui/material";
 import { Link } from "react-router-dom";
 import "slick-carousel/slick/slick.css";

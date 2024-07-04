@@ -14,6 +14,7 @@ import Profile from "./components/Profile";
 import Checkout from "./pages/Checkout";
 import Payment from "./pages/Payment";
 import OrderDetails from "./pages/Orderdetails";
+import Invoice from "./pages/Invoice";
 // const stripePromise = loadStripe(process.env.REACT_APP_PUBLISHABLE_KEY);
 
 const App = () => {
@@ -35,7 +36,8 @@ const App = () => {
             <Route path="/checkout" element={<Checkout />} /> 
             <Route path="/payment" element={<Payment />} /> 
             <Route path="/order-details" element={<OrderDetails />} /> 
-           
+            <Route path="/invoice" element={<Invoice />} /> 
+
           </Routes>
         </div>
       </StripeProvider>
